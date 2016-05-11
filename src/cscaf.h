@@ -32,6 +32,8 @@ enum ProjectNameCase {
  * CONSTANTS
  * ▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼ */
 
+#define MAX_FILE_SIZE (1ul << 14)
+
 /* LICENSE */
 static const char *const LICENSE =
 "                    GNU GENERAL PUBLIC LICENSE"
@@ -722,8 +724,8 @@ static const char *const OUTER_MAKE =
 ;
 
 /* README.md */
-#define README_SEG_COUNT 2ul
-static const enum ProjectNameCase README_CASE_MAP[] = {
+#define README_FILL_COUNT 1ul
+static const enum ProjectNameCase README_FILL_MAP[] = {
 	project
 };
 static const char *const README_SEGS[] = {
@@ -733,8 +735,8 @@ static const char *const README_SEGS[] = {
 };
 
 /* src/project.c */
-#define SOURCE_SEG_COUNT 2ul
-static const enum ProjectNameCase SOURCE_CASE_MAP[] = {
+#define SOURCE_FILL_COUNT 1ul
+static const enum ProjectNameCase SOURCE_FILL_MAP[] = {
 	project
 };
 static const char *const SOURCE_SEGS[] = {
@@ -747,8 +749,8 @@ static const char *const SOURCE_SEGS[] = {
 };
 
 /* src/project.h */
-#define HEADER_SEG_COUNT 4ul
-static const enum ProjectNameCase HEADER_CASE_MAP[] = {
+#define HEADER_FILL_COUNT 3ul
+static const enum ProjectNameCase HEADER_FILL_MAP[] = {
 	PROJECT, PROJECT, PROJECT
 };
 static const char *const HEADER_SEGS[] = {
@@ -802,8 +804,8 @@ static const char *const HEADER_SEGS[] = {
 };
 
 /* src/Makefile */
-#define INNER_MAKE_SEG_COUNT 25ul
-static const enum ProjectNameCase INNER_MAKE_CASE_MAP[] = {
+#define INNER_MAKE_FILL_COUNT 24ul
+static const enum ProjectNameCase INNER_MAKE_FILL_MAP[] = {
 	project, project, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT,
 	PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT,
 	PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT
@@ -873,6 +875,10 @@ static const char *const INNER_MAKE_SEGS[] = {
  *
  * FUNCTION-LIKE MACROS
  * ▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼ */
+
+/* gives new directory read, write, execute permissions */
+#define HANDLE_MKDIR_DEFAULT(FILENAME) HANDLE_MKDIR(FILENAME, S_IRWXU)
+
 /* ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
  * FUNCTION-LIKE MACROS
  *
@@ -883,8 +889,14 @@ static const char *const INNER_MAKE_SEGS[] = {
 char *make_root_dir(char *restrict dir,
 		    const char *restrict name);
 
-static inline void write_to_file(const char *restrict filename,
-				 const char *restrict string);
+static inline void build_contents(char *restrict contents,
+				  const char *const *restrict segs,
+				  const enum ProjectNameCase *restrict fill_map,
+				  const char *const *restrict name_map,
+				  const size_t fill_count);
+
+static inline void write_contents_to_file(const char *restrict filename,
+					  const char *restrict string);
 
 /* ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
  * TOP-LEVEL FUNCTIONS
