@@ -12,6 +12,20 @@ int main(int argc, char *argv[])
 
 	char dir[MAXPATHLEN];
 
+	char *const root = make_root_dir(&dir[0], raw_name);
+
+	strcpy(root, "LICENSE");
+	write_to_file(dir, LICENSE);
+
+	strcpy(root, "Makefile");
+	write_to_file(dir, OUTER_MAKE);
+
+	return 0;
+}
+
+char *make_root_dir(char *restrict dir,
+		    const char *restrict name)
+{
 	char *cwd;
 	char *base;
 
@@ -21,32 +35,27 @@ int main(int argc, char *argv[])
 
 	PUT_SLASH(base);
 
-	copy_string(base, raw_name);
+	base = stpcpy(base, name);
 
+	HANDLE_MKDIR(dir, DEFAULT_PERMISSIONS);
 
-	printf("raw_name: %s\n", raw_name);
-	printf("cap_name: %s\n", cap_name);
-	printf("dir: %s\n", dir);
+	PUT_SLASH(base);
 
-	char *const proj_root = base;
-
-	HANDLE_MKDIR(&dir[0], DEFAULT_PERMISSIONS);
-
-	return 0;
+	return base;
 }
 
 
-inline void copy_string(char *restrict buffer,
-			const char *restrict string)
+inline void write_to_file(const char *restrict filename,
+			  const char *restrict string)
 {
-	while (1) {
-		*buffer = *string;
-		if (*string == '\0')
-			break;
-		++buffer;
-		++string;
-	}
+	FILE *file;
+	HANDLE_FOPEN(file, filename, "w");
+
+	fputs(string, file);
+
+	fclose(file);
 }
+
 
 inline char *extend_string(char *restrict buffer,
 			   const char *restrict extend)
