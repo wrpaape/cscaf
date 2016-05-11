@@ -12,16 +12,17 @@ will build the following structure in the current directory:
 
 ```
 .
-├── LICENSE
-├── Makefile
-├── README.md
-├── bin
-├── obj
-├── src
-│   ├── Makefile
-│   ├── project.c
-│   └── project.h
-└── tests
+└── project
+    ├── LICENSE
+    ├── Makefile
+    ├── README.md
+    ├── bin
+    ├── obj
+    ├── src
+    │   ├── Makefile
+    │   ├── project.c
+    │   └── project.h
+    └── tests
 ```
 
 and take care of some boilerplate in the generated files.
