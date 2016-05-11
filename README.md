@@ -6,7 +6,7 @@
 
 The command
 
-`$cscaf project`
+`$ cscaf project`
 
 will build the following structure in the current directory:
 
