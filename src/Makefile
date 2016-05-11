@@ -5,7 +5,7 @@
 ROOT_DIR = ..
 SRC_DIR  = $(ROOT_DIR)/src
 OBJ_DIR  = $(ROOT_DIR)/obj
-LIB_DIR  = $(ROOT_DIR)/lib
+BIN_DIR  = $(ROOT_DIR)/bin
 TEST_DIR = $(ROOT_DIR)/tests
 
 

@@ -1,91 +1,8 @@
 #include <ctype.h>	/* toupper */
 #include "cscaf.h"
 
-#define HEADER_SEG_COUNT 4ul
-static const char *HEADER_SEGS[HEADER_SEG_COUNT] = {
-	  "#ifndef ",
-	"_H_\n#define ",
-	"_H_\n"
-	"\n#ifdef __cplusplus /* ensure C linkage */"
-	"\nextern \"C\" {"
-	"\n#ifndef restrict /* replace 'restrict' with c++ compatible '__restrict__' */"
-	"\n#define restrict __restrict__"
-	"\n#endif"
-	"\n#endif"
-	"\n"
-	"\n/* EXTERNAL DEPENDENCIES"
-	"\n * ▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼ */"
-	"\n/* ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲"
-	"\n * EXTERNAL DEPENDENCIES"
-	"\n *"
-	"\n *"
-	"\n * TYPEDEFS, ENUM AND STRUCT DEFINITIONS"
-	"\n * ▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼ */"
-	"\n/* ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲"
-	"\n * TYPEDEFS, ENUM AND STRUCT DEFINITIONS"
-	"\n *"
-	"\n *"
-	"\n * CONSTANTS"
-	"\n * ▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼ */"
-	"\n/* ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲"
-	"\n * CONSTANTS"
-	"\n *"
-	"\n *"
-	"\n * FUNCTION-LIKE MACROS"
-	"\n * ▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼ */"
-	"\n/* ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲"
-	"\n * FUNCTION-LIKE MACROS"
-	"\n *"
-	"\n *"
-	"\n * TOP-LEVEL FUNCTIONS"
-	"\n * ▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼ */"
-	"\n/* ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲"
-	"\n * TOP-LEVEL FUNCTIONS"
-	"\n *"
-	"\n *"
-	"\n * HELPER FUNCTIONS"
-	"\n * ▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼ */"
-	"\n/* ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲"
-	"\n * HELPER FUNCTIONS */"
-	"\n"
-	"\n#ifdef __cplusplus /* close 'extern \"C\" {' */"
-	"\n}"
-	"\n#endif /* ifndef ",
-	"_H_ */"
-};
-
-#define MAKE_SEG_COUNT 2ul
-static const char *MAKE_SEGS[MAKE_SEG_COUNT] = {
-	"\nCC     = gcc"
-	"\nCFLAGS = -g -I. -std=c99 -Wall -D__USE_FIXED_PROTOTYPES__"
-	"\nPROG   = ",
-	"\n"
-	"\n$(PROG): %.o"
-	"\n\t$(CC) $(CFLAGS) -o $@ $^"
-	"\n"
-	"\n%.o: %.c %.h"
-	"\n\t$(CC) $(CFLAGS) -c -o $@ $<"
-	"\n"
-	"\nclean:"
-	"\n\t$(RM) $(PROG) *.o"
-};
-
-#define SOURCE_SEG_COUNT 2ul
-static const char *SOURCE_SEGS[SOURCE_SEG_COUNT] = {
-"#include \"",
-".h\""
-"\n"
-"\nint main(int argc, char *argv[])"
-"\n{"
-"\n\treturn 0;"
-"\n}"
-};
-
 int main(int argc, char *argv[])
 {
-	char *cwd;
-	char *cap_name;
-
 	if (argc < 2)
 		EXIT_ON_FAILURE("missing project name");
 
@@ -93,15 +10,57 @@ int main(int argc, char *argv[])
 	const char *const raw_name = argv[1];
 	const char *const cap_name = capitalize_string(raw_name);
 
+	char dir[MAXPATHLEN];
+
+	char *cwd;
+	char *base;
+
 	HANDLE_GETCWD(cwd);
 
-	printf("%s\n", cwd);
+	base = extend_string(dir, cwd);
+
+	PUT_SLASH(base);
+
+	copy_string(base, raw_name);
+
+
+	printf("raw_name: %s\n", raw_name);
+	printf("cap_name: %s\n", cap_name);
+	printf("dir: %s\n", dir);
+
+	char *const proj_root = base;
+
+	HANDLE_MKDIR(&dir[0], DEFAULT_PERMISSIONS);
 
 	return 0;
 }
 
 
-inline char *capitalize_string(char *restrict string)
+inline void copy_string(char *restrict buffer,
+			const char *restrict string)
+{
+	while (1) {
+		*buffer = *string;
+		if (*string == '\0')
+			break;
+		++buffer;
+		++string;
+	}
+}
+
+inline char *extend_string(char *restrict buffer,
+			   const char *restrict extend)
+{
+	while (*extend != '\0') {
+		*buffer = *extend;
+		++buffer;
+		++extend;
+	}
+
+	return buffer;
+}
+
+inline char *capitalize_string(const char *restrict string)
 {
 	char *restrict cap_string;
 
