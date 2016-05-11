@@ -800,6 +800,8 @@ static const char *const HEADER_SEGS[] = {
 	"\n"
 	"\n#ifdef __cplusplus /* close 'extern \"C\" {' */"
 	"\n}"
+	"\n#endif"
+	"\n"
 	"\n#endif /* ifndef ", /* PROJECT */ "_H_ */"
 };
 
