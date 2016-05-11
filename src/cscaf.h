@@ -843,10 +843,10 @@ static const char *const INNER_MAKE_SEGS[] = {
 "\n", /* PROJECT */ "_BDEP = $(", /* PROJECT */ "_OBJ)"
 "\n"
 "\n"
-"# target groups"
-"# =============================================================================="
-"USER_ITEMS = ", /* PROJECT */
-"ALL_ITEMS  = $(USER_ITEMS)"
+"\n# target groups"
+"\n# =============================================================================="
+"\nUSER_ITEMS = ", /* PROJECT */
+"\nALL_ITEMS  = $(USER_ITEMS)"
 "\n"
 "\nEXPAND_GROUP = $(foreach item, $(patsubst %, %_$1, $2), $($(item)))"
 "\n"
@@ -890,9 +890,9 @@ char *make_root_dir(char *restrict dir,
 		    const char *restrict name);
 
 static inline void build_contents(char *restrict contents,
+				  const char *const *restrict name_map,
 				  const char *const *restrict segs,
 				  const enum ProjectNameCase *restrict fill_map,
-				  const char *const *restrict name_map,
 				  const size_t fill_count);
 
 static inline void write_contents_to_file(const char *restrict filename,

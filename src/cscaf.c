@@ -6,8 +6,11 @@ int main(int argc, char *argv[])
 	if (argc < 2)
 		EXIT_ON_FAILURE("missing project name");
 
-	char dir[MAXPATHLEN];
+	char path[MAXPATHLEN];
 	char contents[MAX_FILE_SIZE];
+
+	char *base;
+	char *basename;
 
 	const char *const raw_name = argv[1];
 	const char *const cap_name = capitalize_string(raw_name);
@@ -17,34 +20,78 @@ int main(int argc, char *argv[])
 		[PROJECT] = cap_name
 	};
 
-	char *base = make_root_dir(&dir[0], raw_name);
+	/* ./project */
+	char *const root = make_root_dir(path, raw_name);
 
-	char *const root = base;
-
+	/* ./project/LICENSE */
 	strcpy(root, "LICENSE");
-	write_contents_to_file(dir, LICENSE);
+	write_contents_to_file(path, LICENSE);
 
+	/* ./project/Makefile */
 	strcpy(root, "Makefile");
-	write_contents_to_file(dir, OUTER_MAKE);
+	write_contents_to_file(path, OUTER_MAKE);
 
-	build_contents(&contents[0],
-		       &README_SEGS[0],
-		       &README_FILL_MAP[0],
-		       &name_map[0],
+	/* ./project/README.md */
+	strcpy(root, "README.md");
+	build_contents(contents,
+		       name_map,
+		       README_SEGS,
+		       README_FILL_MAP,
 		       README_FILL_COUNT);
+	write_contents_to_file(path, contents);
 
-	write_contents_to_file(dir, &contents[0]);
+	/* ./project/bin */
+	strcpy(root, "bin");
+	HANDLE_MKDIR_DEFAULT(path);
 
+	/* ./project/obj */
+	strcpy(root, "obj");
+	HANDLE_MKDIR_DEFAULT(path);
+
+	/* ./project/tests */
+	strcpy(root, "tests");
+	HANDLE_MKDIR_DEFAULT(path);
+
+	/* ./project/src */
 	base = stpcpy(root, "src");
-	HANDLE_MKDIR_DEFAULT(dir);
+	HANDLE_MKDIR_DEFAULT(path);
+	PUT_SLASH(base);
+
+	/* ./project/src/project.c */
+	basename = extend_string(base, raw_name);
+	strcpy(basename, ".c");
+	build_contents(contents,
+		       name_map,
+		       SOURCE_SEGS,
+		       SOURCE_FILL_MAP,
+		       SOURCE_FILL_COUNT);
+	write_contents_to_file(path, contents);
+
+	/* ./project/src/project.h */
+	strcpy(basename, ".h");
+	build_contents(contents,
+		       name_map,
+		       HEADER_SEGS,
+		       HEADER_FILL_MAP,
+		       HEADER_FILL_COUNT);
+	write_contents_to_file(path, contents);
+
+	/* ./project/src/Makefile */
+	strcpy(base, "Makefile");
+	build_contents(contents,
+		       name_map,
+		       INNER_MAKE_SEGS,
+		       INNER_MAKE_FILL_MAP,
+		       INNER_MAKE_FILL_COUNT);
+	write_contents_to_file(path, contents);
 
 	return 0;
 }
 
 inline void build_contents(char *restrict contents,
+			   const char *const *restrict name_map,
 			   const char *const *restrict segs,
 			   const enum ProjectNameCase *restrict fill_map,
-			   const char *const *restrict name_map,
 			   const size_t fill_count)
 {
 	size_t i = 0ul;
@@ -63,7 +110,7 @@ inline void build_contents(char *restrict contents,
 }
 
 
-char *make_root_dir(char *restrict dir,
+char *make_root_dir(char *restrict path,
 		    const char *restrict name)
 {
 	char *cwd;
@@ -71,13 +118,13 @@ char *make_root_dir(char *restrict dir,
 
 	HANDLE_GETCWD(cwd);
 
-	base = extend_string(dir, cwd);
+	base = extend_string(path, cwd);
 
 	PUT_SLASH(base);
 
 	base = stpcpy(base, name);
 
-	HANDLE_MKDIR_DEFAULT(dir);
+	HANDLE_MKDIR_DEFAULT(path);
 
 	PUT_SLASH(base);
 
