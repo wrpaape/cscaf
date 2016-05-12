@@ -48,10 +48,6 @@ int main(int argc, char *argv[])
 	strcpy(root, "obj");
 	HANDLE_MKDIR_DEFAULT(path);
 
-	/* ./project/tests */
-	strcpy(root, "tests");
-	HANDLE_MKDIR_DEFAULT(path);
-
 	/* ./project/src */
 	base = stpcpy(root, "src");
 	HANDLE_MKDIR_DEFAULT(path);
@@ -84,6 +80,11 @@ int main(int argc, char *argv[])
 		       INNER_MAKE_FILL_MAP,
 		       INNER_MAKE_FILL_COUNT);
 	write_contents_to_file(path, contents);
+
+	/* ./project/src/test */
+	base = stpcpy(base, "test");
+	HANDLE_MKDIR_DEFAULT(path);
+
 
 	return 0;
 }
