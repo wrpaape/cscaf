@@ -1,4 +1,4 @@
-.PHONY: all clean
+.PHONY: all copy clean
 
 # relative directories
 # ==============================================================================
