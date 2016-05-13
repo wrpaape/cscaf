@@ -33,6 +33,8 @@ enum ProjectNameCase {
  * ▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼ */
 
 #define MAX_FILE_SIZE (1ul << 14)
+/* #define /Users/Reid/my_projects/c/unity/auto/generate_test_runner.rb */
+
 
 /* LICENSE */
 static const char *const LICENSE =
@@ -825,6 +827,7 @@ static const char *const INNER_MAKE_TEMPLATE[] = {
 "\nOBJ_DIR  = $(ROOT_DIR)/obj"
 "\nBIN_DIR  = $(ROOT_DIR)/bin"
 "\nTEST_DIR = $(ROOT_DIR)/test"
+"\nTRNR_DIR = $(TEST_DIR)/test_runners"
 "\n"
 "\n"
 "\n# user config"
@@ -837,7 +840,7 @@ static const char *const INNER_MAKE_TEMPLATE[] = {
 "\nTEST_LIBS   = unity"
 "\nSRC_LFLAGS  = $(addprefix -l, $(SRC_LIBS))"
 "\nTEST_LFLAGS = $(addprefix -l, $(TEST_LIBS))"
-"\n"
+"\nTRNR_SCRIPT = $(UNITY_ROOT)/auto/generate_test_runner.rb"
 "\n"
 "\n# user targets"
 "\n# =============================================================================="
@@ -852,7 +855,7 @@ static const char *const INNER_MAKE_TEMPLATE[] = {
 "\n", /* PROJECT */ "_BDEP = $(", /* PROJECT */ "_OBJ)"
 "\n"
 "\n# root/test/", /* project */ "_test"
-"\n", /* PROJECT */ "_TEST      = $(add_suffix _test, $(", /* PROJECT */ "))"
+"\n", /* PROJECT */ "_TEST      = $(addsuffix _test, $(", /* PROJECT */ "))"
 "\n", /* PROJECT */ "_TEST_DIR  = $(TEST_DIR)"
 "\n", /* PROJECT */ "_TEST_SRC  = $(addprefix $(", /* PROJECT */ "_TEST_DIR)/, $(addsuffix .c, $(", /* PROJECT */ "_TEST)))"
 "\n", /* PROJECT */ "_TEST_OBJ  = $(addprefix $(OBJ_DIR)/,  $(addsuffix .o, $(", /* PROJECT */ "_TEST)))"
@@ -864,6 +867,7 @@ static const char *const INNER_MAKE_TEMPLATE[] = {
 "\n# target groups"
 "\n# =============================================================================="
 "\nEXPAND_GROUP = $(foreach item, $(patsubst %, %_$1, $2), $($(item)))"
+"\nGEN_RUNNER = $(foreach item, $(patsubst %, %_$1, $2), $($(item)))""
 "\n"
 "\nITEMS       = ", /* PROJECT */
 "\nSRC_OBJS    = $(call EXPAND_GROUP,OBJ,$(ITEMS))"
@@ -872,6 +876,7 @@ static const char *const INNER_MAKE_TEMPLATE[] = {
 "\nTEST_BINS   = $(call EXPAND_GROUP,TEST_BIN,$(ITEMS))"
 "\nALL_TARGETS = $(SRC_OBJS) $(TEST_OBJS) $(SRC_BINS) $(TEST_BINS)"
 "\n"
+"\n ruby $(UNITY_ROOT)/auto/generate_test_runner.rb test/TestProductionCode.c  test/test_runners/TestProductionCode_Runner.c"
 "\n"
 "\n# make targets"
 "\n# =============================================================================="
@@ -896,9 +901,14 @@ static const char *const INNER_MAKE_TEMPLATE[] = {
 "\n\t$(CC) $(CFLAGS) -c -o $@ $<"
 "\n"
 "\n"
+"\n# root/test/test_runners/", /* project */ "_test_runner.c"
+"\n$(", /* PROJECT */ "_TRNR):"
+"\n"
+"\n"
 "\nclean:"
 "\n\t$(RM) $(ALL_TARGETS)"
 };
+
 
 /* src/test/project_test.c */
 #define TEST_FILL_COUNT 2ul
@@ -906,7 +916,7 @@ static const enum ProjectNameCase TEST_FILL_MAP[] = {
 	project, project
 };
 static const char *const TEST_TEMPLATE[] = {
-"#include <unity.h>"
+"#include <unity/unity.h>"
 "\n#include \"", /* project */ ".h\""
 "\n"
 "\nvoid setUp(void)"

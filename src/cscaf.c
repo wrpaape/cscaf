@@ -7,10 +7,12 @@ int main(int argc, char *argv[])
 		EXIT_ON_FAILURE("missing project name");
 
 	char path[MAXPATHLEN];
+	char cmd[MAXPATHLEN * 3];
 	char contents[MAX_FILE_SIZE];
 
 	char *base;
 	char *basename;
+	char *cmdline;
 
 	const char *const raw_name = argv[1];
 	const char *const cap_name = capitalize_string(raw_name);
@@ -95,6 +97,26 @@ int main(int argc, char *argv[])
 		       TEST_FILL_MAP,
 		       TEST_FILL_COUNT);
 	write_contents_to_file(path, contents);
+
+
+	/* test runner */
+	cmdline = extend_string(cmd, "generate_test_runner ");
+	cmdline = extend_string(cmdline, path);
+	cmdline = extend_string(cmdline, " ");
+
+	/* ./project/test/test_runners */
+	strcpy(base, "test_runners");
+	HANDLE_MKDIR_DEFAULT(path);
+
+	cmdline = extend_string(cmdline, path);
+	cmdline = extend_string(cmdline, "/");
+	cmdline = extend_string(cmdline, raw_name);
+	strcpy(cmdline, "_test_runner.c");
+
+	/* ./project/test/test_runners/project_test_runner.c */
+	system(cmd);
+
+		/* ruby $(UNITY_ROOT)/auto/generate_test_runner.rb test/TestProductionCode.c  test/test_runners/TestProductionCode_Runner.c */
 
 	return 0;
 }
