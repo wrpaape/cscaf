@@ -808,16 +808,16 @@ static const char *const HEADER_TEMPLATE[] = {
 };
 
 /* src/Makefile */
-#define INNER_MAKE_FILL_COUNT 63ul
+#define INNER_MAKE_FILL_COUNT 64ul
 static const enum ProjectNameCase INNER_MAKE_FILL_MAP[] = {
 	project, PROJECT, project, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT,
 	PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT,
 	PROJECT, PROJECT, PROJECT, project, PROJECT, PROJECT, PROJECT, PROJECT,
 	PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT,
 	PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT,
-	PROJECT, PROJECT, PROJECT, PROJECT, project, PROJECT, PROJECT, project,
-	PROJECT, PROJECT, project, PROJECT, PROJECT, PROJECT, project, PROJECT,
-	PROJECT, project, PROJECT, PROJECT, project, PROJECT, PROJECT,
+	PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, project, PROJECT, PROJECT,
+	project, PROJECT, PROJECT, project, PROJECT, PROJECT, PROJECT, project,
+	PROJECT, PROJECT, project, PROJECT, PROJECT, project, PROJECT, PROJECT,
 
 };
 static const char *const INNER_MAKE_TEMPLATE[] = {
@@ -866,7 +866,7 @@ static const char *const INNER_MAKE_TEMPLATE[] = {
 "\n", /* PROJECT */ "_TEST_OBJ  = $(addprefix $(OBJ_DIR)/,  $(addsuffix .o, $(", /* PROJECT */ "_TEST)))"
 "\n", /* PROJECT */ "_TRNR_OBJ  = $(addprefix $(OBJ_DIR)/,  $(addsuffix .o, $(", /* PROJECT */ "_TRNR)))"
 "\n", /* PROJECT */ "_TEST_BIN  = $(addprefix $(TEST_DIR)/, $(", /* PROJECT */ "_TEST))"
-"\n", /* PROJECT */ "_TEST_ODEP = $(", /* PROJECT */ "_TEST_SRC)"
+"\n", /* PROJECT */ "_TEST_ODEP = $(", /* PROJECT */ "_TEST_SRC) $(", /* PROJECT */ "_ODEP)"
 "\n", /* PROJECT */ "_TRNR_ODEP = $(", /* PROJECT */ "_TRNR_SRC)"
 "\n", /* PROJECT */ "_TEST_BDEP = $(", /* PROJECT */ "_TEST_OBJ) $(", /* PROJECT */ "_TRNR_OBJ)"
 "\n"
