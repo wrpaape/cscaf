@@ -808,14 +808,15 @@ static const char *const HEADER_TEMPLATE[] = {
 };
 
 /* src/Makefile */
-#define INNER_MAKE_FILL_COUNT 47ul
+#define INNER_MAKE_FILL_COUNT 54ul
 static const enum ProjectNameCase INNER_MAKE_FILL_MAP[] = {
 	project, PROJECT, project, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT,
 	PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT,
 	PROJECT, PROJECT, PROJECT, project, PROJECT, PROJECT, PROJECT, PROJECT,
 	PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT,
-	PROJECT, PROJECT, PROJECT, project, PROJECT, PROJECT, project, PROJECT,
-	PROJECT, project, PROJECT, PROJECT, project, PROJECT, PROJECT
+	PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, project, PROJECT,
+	PROJECT, project, PROJECT, PROJECT, project, PROJECT, PROJECT, project,
+	PROJECT, PROJECT, project, PROJECT, PROJECT, PROJECT
 };
 static const char *const INNER_MAKE_TEMPLATE[] = {
 ".PHONY: all clean"
@@ -840,7 +841,7 @@ static const char *const INNER_MAKE_TEMPLATE[] = {
 "\nTEST_LIBS   = unity"
 "\nSRC_LFLAGS  = $(addprefix -l, $(SRC_LIBS))"
 "\nTEST_LFLAGS = $(addprefix -l, $(TEST_LIBS))"
-"\nTRNR_SCRIPT = $(UNITY_ROOT)/auto/generate_test_runner.rb"
+"\nTRNR_SCRIPT = $(HOME)/my_projects/c/unity/auto/generate_test_runner.rb"
 "\n"
 "\n# user targets"
 "\n# =============================================================================="
@@ -858,25 +859,26 @@ static const char *const INNER_MAKE_TEMPLATE[] = {
 "\n", /* PROJECT */ "_TEST      = $(addsuffix _test, $(", /* PROJECT */ "))"
 "\n", /* PROJECT */ "_TEST_DIR  = $(TEST_DIR)"
 "\n", /* PROJECT */ "_TEST_SRC  = $(addprefix $(", /* PROJECT */ "_TEST_DIR)/, $(addsuffix .c, $(", /* PROJECT */ "_TEST)))"
+"\n", /* PROJECT */ "_TRNR      = $(addprefix $(TRNR_DIR)/, $(addsuffix _runner.c, $(", /* PROJECT */ "_TEST)))"
 "\n", /* PROJECT */ "_TEST_OBJ  = $(addprefix $(OBJ_DIR)/,  $(addsuffix .o, $(", /* PROJECT */ "_TEST)))"
 "\n", /* PROJECT */ "_TEST_BIN  = $(addprefix $(TEST_DIR)/, $(", /* PROJECT */ "_TEST))"
-"\n", /* PROJECT */ "_TEST_ODEP = $(", /* PROJECT */ "_TEST_SRC)"
+"\n", /* PROJECT */ "_TEST_ODEP = $(", /* PROJECT */ "_TEST_SRC) $(", /* PROJECT */ "_TRNR)"
 "\n", /* PROJECT */ "_TEST_BDEP = $(", /* PROJECT */ "_TEST_OBJ)"
 "\n"
 "\n"
 "\n# target groups"
 "\n# =============================================================================="
-"\nEXPAND_GROUP = $(foreach item, $(patsubst %, %_$1, $2), $($(item)))"
-"\nGEN_RUNNER = $(foreach item, $(patsubst %, %_$1, $2), $($(item)))""
+"\nEXPAND_GROUP  = $(foreach item, $(patsubst %, %_$1, $2), $($(item)))"
 "\n"
 "\nITEMS       = ", /* PROJECT */
 "\nSRC_OBJS    = $(call EXPAND_GROUP,OBJ,$(ITEMS))"
 "\nSRC_BINS    = $(call EXPAND_GROUP,BIN,$(ITEMS))"
+"\nTRNRS       = $(call EXPAND_GROUP,TRNR,$(ITEMS))"
 "\nTEST_OBJS   = $(call EXPAND_GROUP,TEST_OBJ,$(ITEMS))"
 "\nTEST_BINS   = $(call EXPAND_GROUP,TEST_BIN,$(ITEMS))"
-"\nALL_TARGETS = $(SRC_OBJS) $(TEST_OBJS) $(SRC_BINS) $(TEST_BINS)"
+"\nALL_TARGETS = $(SRC_OBJS) $(SRC_BINS) $(TRNRS) $(TEST_OBJS) $(TEST_BINS)"
 "\n"
-"\n ruby $(UNITY_ROOT)/auto/generate_test_runner.rb test/TestProductionCode.c  test/test_runners/TestProductionCode_Runner.c"
+"\n# ruby $(UNITY_ROOT)/auto/generate_test_runner.rb test/TestProductionCode.c  test/test_runners/TestProductionCode_Runner.c"
 "\n"
 "\n# make targets"
 "\n# =============================================================================="
@@ -900,9 +902,9 @@ static const char *const INNER_MAKE_TEMPLATE[] = {
 "\n$(", /* PROJECT */ "_TEST_OBJ): $(", /* PROJECT */ "_TEST_ODEP)"
 "\n\t$(CC) $(CFLAGS) -c -o $@ $<"
 "\n"
-"\n"
 "\n# root/test/test_runners/", /* project */ "_test_runner.c"
 "\n$(", /* PROJECT */ "_TRNR):"
+"\n\truby $(TRNR_SCRIPT) $(", /* PROJECT */ "_TEST_SRC) $(", /* PROJECT */ "_TRNR)"
 "\n"
 "\n"
 "\nclean:"
