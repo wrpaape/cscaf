@@ -8,7 +8,7 @@ The command
 
 `$ cscaf project`
 
-will build the following structure in the current directory:
+will build the following structure in the current directory after a `make`:
 
 ```
 .
@@ -17,13 +17,20 @@ will build the following structure in the current directory:
     ├── Makefile
     ├── README.md
     ├── bin
+    │   └── project
     ├── obj
+    │   ├── project.o
+    │   ├── project_test.o
+    │   └── project_test_runner.o
     ├── src
     │   ├── Makefile
     │   ├── project.c
     │   └── project.h
     └── test
-        ├── project_test.c
+        ├── project_test
+        ├── project_test.c
+        └── test_runners
+            └── project_test_runner.c
 ```
 
 and take care of some boilerplate in the generated files.

@@ -7,12 +7,10 @@ int main(int argc, char *argv[])
 		EXIT_ON_FAILURE("missing project name");
 
 	char path[MAXPATHLEN];
-	char cmd[MAXPATHLEN * 3];
 	char contents[MAX_FILE_SIZE];
 
 	char *base;
 	char *basename;
-	char *cmdline;
 
 	const char *const raw_name = argv[1];
 	const char *const cap_name = capitalize_string(raw_name);

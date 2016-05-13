@@ -808,15 +808,17 @@ static const char *const HEADER_TEMPLATE[] = {
 };
 
 /* src/Makefile */
-#define INNER_MAKE_FILL_COUNT 54ul
+#define INNER_MAKE_FILL_COUNT 63ul
 static const enum ProjectNameCase INNER_MAKE_FILL_MAP[] = {
 	project, PROJECT, project, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT,
 	PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT,
 	PROJECT, PROJECT, PROJECT, project, PROJECT, PROJECT, PROJECT, PROJECT,
 	PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT,
-	PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, project, PROJECT,
-	PROJECT, project, PROJECT, PROJECT, project, PROJECT, PROJECT, project,
-	PROJECT, PROJECT, project, PROJECT, PROJECT, PROJECT
+	PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT,
+	PROJECT, PROJECT, PROJECT, PROJECT, project, PROJECT, PROJECT, project,
+	PROJECT, PROJECT, project, PROJECT, PROJECT, PROJECT, project, PROJECT,
+	PROJECT, project, PROJECT, PROJECT, project, PROJECT, PROJECT,
+
 };
 static const char *const INNER_MAKE_TEMPLATE[] = {
 ".PHONY: all clean"
@@ -857,54 +859,61 @@ static const char *const INNER_MAKE_TEMPLATE[] = {
 "\n"
 "\n# root/test/", /* project */ "_test"
 "\n", /* PROJECT */ "_TEST      = $(addsuffix _test, $(", /* PROJECT */ "))"
+"\n", /* PROJECT */ "_TRNR      = $(addsuffix _runner, $(", /* PROJECT */ "_TEST))"
 "\n", /* PROJECT */ "_TEST_DIR  = $(TEST_DIR)"
 "\n", /* PROJECT */ "_TEST_SRC  = $(addprefix $(", /* PROJECT */ "_TEST_DIR)/, $(addsuffix .c, $(", /* PROJECT */ "_TEST)))"
-"\n", /* PROJECT */ "_TRNR      = $(addprefix $(TRNR_DIR)/, $(addsuffix _runner.c, $(", /* PROJECT */ "_TEST)))"
+"\n", /* PROJECT */ "_TRNR_SRC  = $(addprefix $(TRNR_DIR)/, $(addsuffix .c, $(", /* PROJECT */ "_TRNR)))"
 "\n", /* PROJECT */ "_TEST_OBJ  = $(addprefix $(OBJ_DIR)/,  $(addsuffix .o, $(", /* PROJECT */ "_TEST)))"
+"\n", /* PROJECT */ "_TRNR_OBJ  = $(addprefix $(OBJ_DIR)/,  $(addsuffix .o, $(", /* PROJECT */ "_TRNR)))"
 "\n", /* PROJECT */ "_TEST_BIN  = $(addprefix $(TEST_DIR)/, $(", /* PROJECT */ "_TEST))"
-"\n", /* PROJECT */ "_TEST_ODEP = $(", /* PROJECT */ "_TEST_SRC) $(", /* PROJECT */ "_TRNR)"
-"\n", /* PROJECT */ "_TEST_BDEP = $(", /* PROJECT */ "_TEST_OBJ)"
+"\n", /* PROJECT */ "_TEST_ODEP = $(", /* PROJECT */ "_TEST_SRC)"
+"\n", /* PROJECT */ "_TRNR_ODEP = $(", /* PROJECT */ "_TRNR_SRC)"
+"\n", /* PROJECT */ "_TEST_BDEP = $(", /* PROJECT */ "_TEST_OBJ) $(", /* PROJECT */ "_TRNR_OBJ)"
 "\n"
 "\n"
 "\n# target groups"
 "\n# =============================================================================="
 "\nEXPAND_GROUP  = $(foreach item, $(patsubst %, %_$1, $2), $($(item)))"
 "\n"
-"\nITEMS       = ", /* PROJECT */
+"\nITEMS       = ", /* PROJECT*/
 "\nSRC_OBJS    = $(call EXPAND_GROUP,OBJ,$(ITEMS))"
 "\nSRC_BINS    = $(call EXPAND_GROUP,BIN,$(ITEMS))"
-"\nTRNRS       = $(call EXPAND_GROUP,TRNR,$(ITEMS))"
+"\nTRNR_SRCS   = $(call EXPAND_GROUP,TRNR_SRC,$(ITEMS))"
+"\nTRNR_OBJS   = $(call EXPAND_GROUP,TRNR_OBJ,$(ITEMS))"
 "\nTEST_OBJS   = $(call EXPAND_GROUP,TEST_OBJ,$(ITEMS))"
 "\nTEST_BINS   = $(call EXPAND_GROUP,TEST_BIN,$(ITEMS))"
-"\nALL_TARGETS = $(SRC_OBJS) $(SRC_BINS) $(TRNRS) $(TEST_OBJS) $(TEST_BINS)"
+"\nALL_TARGETS = $(SRC_OBJS) $(SRC_BINS) $(TRNR_SRCS) $(TRNR_OBJS) $(TEST_OBJS) $(TEST_BINS)"
 "\n"
-"\n# ruby $(UNITY_ROOT)/auto/generate_test_runner.rb test/TestProductionCode.c  test/test_runners/TestProductionCode_Runner.c"
 "\n"
 "\n# make targets"
 "\n# =============================================================================="
 "\nall: $(ALL_TARGETS)"
 "\n"
 "\n"
-"\n# root/bin/", /* project */
-"\n$(", /* PROJECT */ "_BIN): $(", /* PROJECT */ "_BDEP)"
-"\n\t$(CC) $(CFLAGS) $(SRC_LFLAGS) -o $@ $^"
-"\n"
 "\n# root/obj/", /* project */ ".o"
 "\n$(", /* PROJECT */ "_OBJ): $(", /* PROJECT */ "_ODEP)"
 "\n\t$(CC) $(CFLAGS) -c -o $@ $<"
 "\n"
+"\n# root/bin/", /* project */
+"\n$(", /* PROJECT */ "_BIN): $(", /* PROJECT */ "_BDEP)"
+"\n\t$(CC) $(CFLAGS) $(SRC_LFLAGS) -o $@ $^"
 "\n"
-"\n# root/test/", /* project */ "_test"
-"\n$(", /* PROJECT */ "_TEST_BIN): $(", /* PROJECT */ "_TEST_BDEP)"
-"\n\t$(CC) $(CFLAGS) $(SRC_LFLAGS) $(TEST_LFLAGS) -o $@ $^"
+"\n"
+"\n# root/test/test_runners/", /* project */ "_test_runner.c"
+"\n$(", /* PROJECT */ "_TRNR_SRC):"
+"\n\truby $(TRNR_SCRIPT) $(", /* PROJECT */ "_TEST_SRC) $(", /* PROJECT */ "_TRNR_SRC)"
+"\n"
+"\n# root/obj/", /* project */ "_test_runner.o"
+"\n$(", /* PROJECT */ "_TRNR_OBJ): $(", /* PROJECT */ "_TRNR_ODEP)"
+"\n\t$(CC) $(CFLAGS) -c -o $@ $<"
 "\n"
 "\n# root/obj/", /* project */ "_test.o"
 "\n$(", /* PROJECT */ "_TEST_OBJ): $(", /* PROJECT */ "_TEST_ODEP)"
 "\n\t$(CC) $(CFLAGS) -c -o $@ $<"
 "\n"
-"\n# root/test/test_runners/", /* project */ "_test_runner.c"
-"\n$(", /* PROJECT */ "_TRNR):"
-"\n\truby $(TRNR_SCRIPT) $(", /* PROJECT */ "_TEST_SRC) $(", /* PROJECT */ "_TRNR)"
+"\n# root/test/", /* project */ "_test"
+"\n$(", /* PROJECT */ "_TEST_BIN): $(", /* PROJECT */ "_TEST_BDEP)"
+"\n\t$(CC) $(CFLAGS) $(SRC_LFLAGS) $(TEST_LFLAGS) -o $@ $^"
 "\n"
 "\n"
 "\nclean:"
