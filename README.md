@@ -22,7 +22,8 @@ will build the following structure in the current directory:
     │   ├── Makefile
     │   ├── project.c
     │   └── project.h
-    └── tests
+    └── test
+        ├── project_test.c
 ```
 
 and take care of some boilerplate in the generated files.
