@@ -41,16 +41,21 @@ ALL_OBJS    = $(call EXPAND_GROUP,OBJ,$(ALL_ITEMS))
 ALL_BINS    = $(call EXPAND_GROUP,BIN,$(ALL_ITEMS))
 ALL_TARGETS = $(ALL_OBJS) $(ALL_BINS)
 
+# 
+# ==============================================================================
 
 # make targets
 # ==============================================================================
-all: $(ALL_TARGETS)
+all: $(ALL_TARGETS) copy
 
 $(CSCAF_BIN): $(CSCAF_BDEP)
 	$(CC) $(CFLAGS) -o $@ $^
 
 $(CSCAF_OBJ): $(CSCAF_ODEP)
 	$(CC) $(CFLAGS) -c -o $@ $<
+
+copy: $(CSCAF_BIN)
+	cp $(CSCAF_BIN) $(USER_BIN)
 
 clean:
 	$(RM) $(ALL_TARGETS)

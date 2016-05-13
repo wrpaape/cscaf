@@ -728,7 +728,7 @@ static const char *const OUTER_MAKE =
 static const enum ProjectNameCase README_FILL_MAP[] = {
 	project
 };
-static const char *const README_SEGS[] = {
+static const char *const README_TEMPLATE[] = {
 "# ", /* project */
 "\n"
 "\n## TODO: everything"
@@ -739,7 +739,7 @@ static const char *const README_SEGS[] = {
 static const enum ProjectNameCase SOURCE_FILL_MAP[] = {
 	project
 };
-static const char *const SOURCE_SEGS[] = {
+static const char *const SOURCE_TEMPLATE[] = {
 "#include \"", /* project */ ".h\""
 "\n"
 "\nint main(int argc, char *argv[])"
@@ -753,7 +753,7 @@ static const char *const SOURCE_SEGS[] = {
 static const enum ProjectNameCase HEADER_FILL_MAP[] = {
 	PROJECT, PROJECT, PROJECT
 };
-static const char *const HEADER_SEGS[] = {
+static const char *const HEADER_TEMPLATE[] = {
 	"#ifndef ", /* PROJECT */ "_H_"
 	"\n#define ", /* PROJECT */ "_H_"
 	"\n\n#ifdef __cplusplus /* ensure C linkage */"
@@ -806,13 +806,16 @@ static const char *const HEADER_SEGS[] = {
 };
 
 /* src/Makefile */
-#define INNER_MAKE_FILL_COUNT 24ul
+#define INNER_MAKE_FILL_COUNT 47ul
 static const enum ProjectNameCase INNER_MAKE_FILL_MAP[] = {
 	project, PROJECT, project, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT,
 	PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT,
-	PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT
+	PROJECT, PROJECT, PROJECT, project, PROJECT, PROJECT, PROJECT, PROJECT,
+	PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT,
+	PROJECT, PROJECT, PROJECT, project, PROJECT, PROJECT, project, PROJECT,
+	PROJECT, project, PROJECT, PROJECT, project, PROJECT, PROJECT
 };
-static const char *const INNER_MAKE_SEGS[] = {
+static const char *const INNER_MAKE_TEMPLATE[] = {
 ".PHONY: all clean"
 "\n"
 "\n# relative directories"
@@ -849,25 +852,24 @@ static const char *const INNER_MAKE_SEGS[] = {
 "\n", /* PROJECT */ "_BDEP = $(", /* PROJECT */ "_OBJ)"
 "\n"
 "\n# root/test/", /* project */ "_test"
-"\n", /* PROJECT */ "_TEST      = ", /* project */
+"\n", /* PROJECT */ "_TEST      = $(add_suffix _test, $(", /* PROJECT */ "))"
 "\n", /* PROJECT */ "_TEST_DIR  = $(TEST_DIR)"
 "\n", /* PROJECT */ "_TEST_SRC  = $(addprefix $(", /* PROJECT */ "_TEST_DIR)/, $(addsuffix .c, $(", /* PROJECT */ "_TEST)))"
-"\n", /* PROJECT */ "_TEST_OBJ  = $(addprefix $(OBJ_DIR)/,  $(addsuffix .o, $(", /* PROJECT */ ")))"
-"\n", /* PROJECT */ "_TEST_BIN  = $(addprefix $(TEST_DIR)/, $(", /* PROJECT */ "))"
-"\n", /* PROJECT */ "_TEST_ODEP = $(", /* PROJECT */ "_SRC)"
-"\n", /* PROJECT */ "_TEST_BDEP = $(", /* PROJECT */ "_OBJ)"
+"\n", /* PROJECT */ "_TEST_OBJ  = $(addprefix $(OBJ_DIR)/,  $(addsuffix .o, $(", /* PROJECT */ "_TEST)))"
+"\n", /* PROJECT */ "_TEST_BIN  = $(addprefix $(TEST_DIR)/, $(", /* PROJECT */ "_TEST))"
+"\n", /* PROJECT */ "_TEST_ODEP = $(", /* PROJECT */ "_TEST_SRC)"
+"\n", /* PROJECT */ "_TEST_BDEP = $(", /* PROJECT */ "_TEST_OBJ)"
 "\n"
 "\n"
 "\n# target groups"
 "\n# =============================================================================="
-"\nSRC_ITEMS = ", /* PROJECT */
-"\n"
 "\nEXPAND_GROUP = $(foreach item, $(patsubst %, %_$1, $2), $($(item)))"
 "\n"
-"\nSRC_OBJS    = $(call EXPAND_GROUP,OBJ,$(SRC_ITEMS))"
-"\nSRC_BINS    = $(call EXPAND_GROUP,BIN,$(SRC_ITEMS))"
-"\nTEST_OBJS   = $(call EXPAND_GROUP,TEST_OBJ,$(SRC_ITEMS))"
-"\nTEST_BINS   = $(call EXPAND_GROUP,TEST_BIN,$(SRC_ITEMS))"
+"\nITEMS       = ", /* PROJECT */
+"\nSRC_OBJS    = $(call EXPAND_GROUP,OBJ,$(ITEMS))"
+"\nSRC_BINS    = $(call EXPAND_GROUP,BIN,$(ITEMS))"
+"\nTEST_OBJS   = $(call EXPAND_GROUP,TEST_OBJ,$(ITEMS))"
+"\nTEST_BINS   = $(call EXPAND_GROUP,TEST_BIN,$(ITEMS))"
 "\nALL_TARGETS = $(SRC_OBJS) $(TEST_OBJS) $(SRC_BINS) $(TEST_BINS)"
 "\n"
 "\n"
@@ -875,22 +877,24 @@ static const char *const INNER_MAKE_SEGS[] = {
 "\n# =============================================================================="
 "\nall: $(ALL_TARGETS)"
 "\n"
+"\n"
 "\n# root/bin/", /* project */
 "\n$(", /* PROJECT */ "_BIN): $(", /* PROJECT */ "_BDEP)"
-"\n	$(CC) $(CFLAGS) $(SRC_LFLAGS) -o $@ $^"
+"\n\t$(CC) $(CFLAGS) $(SRC_LFLAGS) -o $@ $^"
 "\n"
 "\n# root/obj/", /* project */ ".o"
 "\n$(", /* PROJECT */ "_OBJ): $(", /* PROJECT */ "_ODEP)"
-"\n	$(CC) $(CFLAGS) -c -o $@ $<"
+"\n\t$(CC) $(CFLAGS) -c -o $@ $<"
 "\n"
 "\n"
 "\n# root/test/", /* project */ "_test"
-"\n$(", /* PROJECT */ "TEST_BIN): $(", /* PROJECT */ "TEST_BDEP)"
-"\n	$(CC) $(CFLAGS) $(SRC_LFLAGS) $(TEST_LFLAGS) -o $@ $^"
+"\n$(", /* PROJECT */ "_TEST_BIN): $(", /* PROJECT */ "_TEST_BDEP)"
+"\n\t$(CC) $(CFLAGS) $(SRC_LFLAGS) $(TEST_LFLAGS) -o $@ $^"
 "\n"
 "\n# root/obj/", /* project */ "_test.o"
-"\n$(", /* PROJECT */ "TEST_OBJ): $(", /* PROJECT */ "TEST_ODEP)"
-"\n	$(CC) $(CFLAGS) -c -o $@ $<"
+"\n$(", /* PROJECT */ "_TEST_OBJ): $(", /* PROJECT */ "_TEST_ODEP)"
+"\n\t$(CC) $(CFLAGS) -c -o $@ $<"
+"\n"
 "\n"
 "\nclean:"
 "\n\t$(RM) $(ALL_TARGETS)"
@@ -901,9 +905,9 @@ static const char *const INNER_MAKE_SEGS[] = {
 static const enum ProjectNameCase TEST_FILL_MAP[] = {
 	project, project
 };
-static const char *const TEST_SEGS[] = {
+static const char *const TEST_TEMPLATE[] = {
 "#include <unity.h>"
-"\n#include \"", /* project */ "_test.h\""
+"\n#include \"", /* project */ ".h\""
 "\n"
 "\nvoid setUp(void)"
 "\n{"

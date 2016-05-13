@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
 	strcpy(root, "README.md");
 	build_contents(contents,
 		       name_map,
-		       README_SEGS,
+		       README_TEMPLATE,
 		       README_FILL_MAP,
 		       README_FILL_COUNT);
 	write_contents_to_file(path, contents);
@@ -58,7 +58,7 @@ int main(int argc, char *argv[])
 	strcpy(basename, ".c");
 	build_contents(contents,
 		       name_map,
-		       SOURCE_SEGS,
+		       SOURCE_TEMPLATE,
 		       SOURCE_FILL_MAP,
 		       SOURCE_FILL_COUNT);
 	write_contents_to_file(path, contents);
@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
 	strcpy(basename, ".h");
 	build_contents(contents,
 		       name_map,
-		       HEADER_SEGS,
+		       HEADER_TEMPLATE,
 		       HEADER_FILL_MAP,
 		       HEADER_FILL_COUNT);
 	write_contents_to_file(path, contents);
@@ -76,15 +76,25 @@ int main(int argc, char *argv[])
 	strcpy(base, "Makefile");
 	build_contents(contents,
 		       name_map,
-		       INNER_MAKE_SEGS,
+		       INNER_MAKE_TEMPLATE,
 		       INNER_MAKE_FILL_MAP,
 		       INNER_MAKE_FILL_COUNT);
 	write_contents_to_file(path, contents);
 
-	/* ./project/src/test */
-	base = stpcpy(base, "test");
+	/* ./project/test */
+	base = stpcpy(root, "test");
 	HANDLE_MKDIR_DEFAULT(path);
+	PUT_SLASH(base);
 
+	/* ./project/test/project_test.c */
+	basename = extend_string(base, raw_name);
+	strcpy(basename, "_test.c");
+	build_contents(contents,
+		       name_map,
+		       TEST_TEMPLATE,
+		       TEST_FILL_MAP,
+		       TEST_FILL_COUNT);
+	write_contents_to_file(path, contents);
 
 	return 0;
 }
