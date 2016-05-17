@@ -961,10 +961,12 @@ static const char *const INNER_MAKE_TEMPLATE[] = {
 "\n"
 "\n# placeholders"
 "\n# =============================================================================="
-"\n# list of all make targets"
+"\n# make target types"
 "\nTARGET_TYPES = TRNR_SRC OBJ PIC_OBJ TRNR_OBJ TEST_OBJ BIN TEST_BIN \\"
 "\n               SHARED STATIC MKDIR_HDR CP_HDR CP_BIN CP_SHARED     \\"
 "\n               CP_STATIC"
+"\n"
+"\n# list of all make targets"
 "\nALL_TARGETS  = $(foreach type,$(TARGET_TYPES),$(call EXPAND_TARGETS,$(type)))"
 "\n"
 "\n# make recipes"
@@ -1123,13 +1125,13 @@ static const char *const INNER_MAKE_TEMPLATE[] = {
 
 
 /* src/test/project_test.c */
-#define TEST_FILL_COUNT 2ul
+#define TEST_FILL_COUNT 3ul
 static const enum ProjectNameCase TEST_FILL_MAP[] = {
-	project, project
+	project, project, project
 };
 static const char *const TEST_TEMPLATE[] = {
 "#include <unity/unity.h>"
-"\n#include \"", /* project */ ".h\""
+"\n#include <", /* project */ "/", /* project */ ".h>"
 "\n"
 "\nvoid setUp(void)"
 "\n{"
