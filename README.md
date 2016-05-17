@@ -8,7 +8,7 @@ The command
 
 `$ cscaf project`
 
-will build the following structure in the current directory after a `make`:
+will build the following project structure after a `make`:
 
 ```
 .
@@ -21,16 +21,29 @@ will build the following structure in the current directory after a `make`:
     ├── obj
     │   ├── project.o
     │   ├── project_test.o
-    │   └── project_test_runner.o
+    │   ├── project_test_runner.o
+    │   └── pic_project.o
+    ├── shared
+    │   └── libproject_shared.so
     ├── src
     │   ├── Makefile
     │   ├── project.c
     │   └── project.h
+    ├── static
+    │   └── libproject_static.a
     └── test
         ├── project_test
         ├── project_test.c
         └── test_runners
             └── project_test_runner.c
+
+C_LIBRARY_HEADERS
+└── project
+    └── project.h
+
+HOME
+└── bin
+    └── project
 ```
 
 and take care of some boilerplate in the generated files.
