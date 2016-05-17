@@ -48,6 +48,10 @@ int main(int argc, char *argv[])
 	strcpy(root, "obj");
 	HANDLE_MKDIR_DEFAULT(path);
 
+	/* ./project/lib */
+	strcpy(root, "lib");
+	HANDLE_MKDIR_DEFAULT(path);
+
 	/* ./project/src */
 	base = stpcpy(root, "src");
 	HANDLE_MKDIR_DEFAULT(path);
