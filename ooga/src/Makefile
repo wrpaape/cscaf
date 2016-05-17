@@ -2,6 +2,15 @@
 .PHONY: all clean
 
 
+# environment config
+# ==============================================================================
+# USER_BIN           = ~/bin                = export binaries dest dir
+# C_LIBRARY_HEADERS  = ~C_LIBRARIES/include = module mkdir (for header) location
+# C_SHARED_LIBRARIES = ~C_LIBRARIES/shared  = export shared libraries dest dir
+# C_STATIC_LIBRARIES = ~C_LIBRARIES/static  = export static libraries dest dir
+# UNITY_SCRIPTS      = ~C_ROOT/unity/auto   = unity scripts folder
+
+
 # utility config
 # ==============================================================================
 # utilities
@@ -26,9 +35,7 @@ TEST_LFLAGS = $(call MAP_LFLAGS,$(TEST_DEP_LIBS))
 RM_FLAGS    = -rf
 
 # unity test runner generator script
-GEN_TRNR_BASE = generate_test_runner.rb
-GEN_TRNR_DIR  = $(call PATH_JOIN,$(HOME) my_projects c unity auto)
-GEN_TRNR_ABS  = $(call PATH_JOIN,$(GEN_TRNR_DIR) $(GEN_TRNR_BASE))
+GENERATE_TEST_RUNNER = $(call PATH_JOIN,$(UNITY_SCRIPTS) generate_test_runner.rb)
 
 
 # directory config
@@ -37,20 +44,20 @@ GEN_TRNR_ABS  = $(call PATH_JOIN,$(GEN_TRNR_DIR) $(GEN_TRNR_BASE))
 SRC    = src
 # header files
 HDR    = $(SRC)
-# all built object files
+# all generated object files
 OBJ    = obj
-# built module binary files
+# generated module binary files
 BIN    = bin
-# built shared library files
+# generated shared library files
 SHARED = shared
-# built static library files
+# generated static library files
 STATIC = static
-# test source and built test binary files
+# test source and generated test binary files
 TEST   = test
-# built test_runner source files
+# generated test_runner source files
 TRNR   = test_runners
 
-# paths relative project root, $(ROOT_DIR)
+# paths relative project root, 'ROOT_DIR'
 ROOT_DIR      = ..
 SRC_DIR       = $(call PATH_JOIN,$(ROOT_DIR) $(SRC))
 HDR_DIR       = $(call PATH_JOIN,$(ROOT_DIR) $(HDR))
@@ -86,8 +93,6 @@ TEST_BIN_PFX  = $(EMPTY)
 SHARED_PFX    = $(LIB_PFX)
 STATIC_PFX    = $(LIB_PFX)
 MKDIR_HDR_PFX = $(EMPTY)
-CP_BIN_PFX    = $(BIN_PFX)
-CP_HDR_PFX    = $(HDR_PFX)
 
 # suffixes (including extensions)
 SRC_SFX       = .c
@@ -103,8 +108,6 @@ TEST_BIN_SFX  = $(TEST_SFX)
 SHARED_SFX    = $(call CONCAT,_ $(SHARED) .so)
 STATIC_SFX    = $(call CONCAT,_ $(STATIC) .a)
 MKDIR_HDR_SFX = $(EMPTY)
-CP_BIN_SFX    = $(BIN_SFX)
-CP_HDR_SFX    = $(HDR_SFX)
 
 
 # functions
@@ -135,11 +138,12 @@ EXPAND_RULE     = $(call EXPAND_DEP_LINE,$1,$2)$(CMD_SPACE)$(call EXPAND_RECIPE,
 # ==============================================================================
 # list of all make targets
 TARGET_TYPES = TRNR_SRC OBJ PIC_OBJ TRNR_OBJ TEST_OBJ BIN TEST_BIN \
-               SHARED STATIC MKDIR_HDR CP_HDR CP_BIN
+               SHARED STATIC MKDIR_HDR CP_HDR CP_BIN CP_SHARED     \
+               CP_STATIC
 ALL_TARGETS  = $(foreach type,$(TARGET_TYPES),$(call EXPAND_TARGETS,$(type)))
 
 # make recipes
-TRNR_SRC_RECIPE  = $(RUBY) $(GEN_TRNR_ABS) $$< $$@
+TRNR_SRC_RECIPE  = $(RUBY) $(GENERATE_TEST_RUNNER) $$< $$@
 OBJ_RECIPE       = $(CC) $(CFLAGS) -c -o $$@ $$< $(LFLAGS)
 PIC_OBJ_RECIPE   = $(OBJ_RECIPE) $(PIC_FLAG)
 TRNR_OBJ_RECIPE  = $(OBJ_RECIPE)
@@ -149,8 +153,10 @@ TEST_BIN_RECIPE  = $(BIN_RECIPE) $(TEST_LFLAGS)
 STATIC_RECIPE    = $(AR) $(ARFLAGS) $$@ $$^
 SHARED_RECIPE    = $(BIN_RECIPE) $(SHARED_FLAG)
 MKDIR_HDR_RECIPE = $(MKDIR) $$@
-CP_HDR_RECIPE    = $(CP_BIN_RECIPE)
-CP_BIN_RECIPE    = $(CP) $$< $$@
+CP_HDR_RECIPE    = $(CP) $$< $$@
+CP_BIN_RECIPE    = $(CP_HDR_RECIPE)
+CP_SHARED_RECIPE = $(CP_HDR_RECIPE)
+CP_STATIC_RECIPE = $(CP_HDR_RECIPE)
 
 # misc
 EMPTY =
@@ -188,6 +194,8 @@ OOGA_STATIC    = $(call EXPAND_DIR_PATH,$(OOGA),STATIC)
 OOGA_MKDIR_HDR = $(call EXPAND_PATH,$(C_LIBRARY_HEADERS),$(OOGA),MKDIR_HDR)
 OOGA_CP_HDR    = $(call EXPAND_PATH,$(OOGA_MKDIR_HDR),$(OOGA),HDR)
 OOGA_CP_BIN    = $(call EXPAND_PATH,$(USER_BIN),$(OOGA),BIN)
+OOGA_CP_SHARED = $(call EXPAND_PATH,$(C_SHARED_LIBRARIES),$(OOGA),SHARED)
+OOGA_CP_STATIC = $(call EXPAND_PATH,$(C_STATIC_LIBRARIES),$(OOGA),STATIC)
 
 
 # module target dependencies
@@ -203,6 +211,8 @@ OOGA_STATIC_DEP    = $(OOGA_OBJ)
 OOGA_MKDIR_HDR_DEP = $(EMPTY)
 OOGA_CP_HDR_DEP    = $(OOGA_HDR) $(OOGA_MKDIR_HDR)
 OOGA_CP_BIN_DEP    = $(OOGA_BIN)
+OOGA_CP_SHARED_DEP = $(OOGA_SHARED)
+OOGA_CP_STATIC_DEP = $(OOGA_STATIC)
 
 # update target groups
 TRNR_SRC_MODULES  += OOGA
@@ -217,6 +227,8 @@ STATIC_MODULES    += OOGA
 MKDIR_HDR_MODULES += OOGA
 CP_HDR_MODULES    += OOGA
 CP_BIN_MODULES    += OOGA
+CP_SHARED_MODULES += OOGA
+CP_STATIC_MODULES += OOGA
 
 
 # make commands
@@ -260,17 +272,25 @@ $(foreach module,$(SHARED_MODULES),$(eval $(call EXPAND_RULE,$(module),SHARED)))
 # ooga/shared/lib<module>_static.a
 $(foreach module,$(STATIC_MODULES),$(eval $(call EXPAND_RULE,$(module),STATIC)))
 
-# make directories at root of header file include path  ~C_LIBRARY_HEADERS
+# make directories at root of header file include path, 'C_LIBRARY_HEADERS'
 # ~C_LIBRARY_HEADERS/<module>
 $(foreach module,$(CP_HDR_MODULES),$(eval $(call EXPAND_RULE,$(module),MKDIR_HDR)))
 
-# copy header files to ~C_LIBRARY_HEADERS/<module>
+# copy header files to module include path
 # ~C_LIBRARY_HEADERS/<module>/<module>.h
 $(foreach module,$(CP_HDR_MODULES),$(eval $(call EXPAND_RULE,$(module),CP_HDR)))
 
-# copy binary files to ~/bin
-# ~/bin/<module>
+# copy binary files to 'USER_BIN'
+# ~USER_BIN/<module>
 $(foreach module,$(CP_BIN_MODULES),$(eval $(call EXPAND_RULE,$(module),CP_BIN)))
+
+# copy shared library files to 'C_SHARED_LIBRARIES'
+# ~C_SHARED_LIBRARIES/lib<module>_shared.so
+$(foreach module,$(CP_SHARED_MODULES),$(eval $(call EXPAND_RULE,$(module),CP_SHARED)))
+
+# copy static library files to 'C_STATIC_LIBRARIES'
+# ~C_STATIC_LIBRARIES/lib<module>_static.a
+$(foreach module,$(CP_STATIC_MODULES),$(eval $(call EXPAND_RULE,$(module),CP_STATIC)))
 
 clean:
 	$(RM) $(RM_FLAGS) $(ALL_TARGETS)

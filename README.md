@@ -41,9 +41,14 @@ C_LIBRARY_HEADERS
 └── project
     └── project.h
 
-HOME
-└── bin
-    └── project
+USER_BIN
+└── project
+
+C_SHARED_LIBRARIES
+└── libproject_shared.so
+
+C_STATIC_LIBRARIES
+└── libproject_static.a
 ```
 
-and take care of some boilerplate in the generated files.
+and takes care of some boilerplate in the generated files.
