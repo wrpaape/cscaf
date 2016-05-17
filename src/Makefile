@@ -9,18 +9,20 @@ AR    = ar
 RUBY  = ruby
 MKDIR = mkdir
 CP    = cp
+RM    = rm
+
+# library dependencies
+DEP_LIBS      =
+TEST_DEP_LIBS = unity
 
 # flags
 CFLAGS      = -g -I$(HDR_DIR) -std=c99 -Wall -D__USE_FIXED_PROTOTYPES__
 ARFLAGS     = rcs
 PIC_FLAG    = -fpic
 SHARED_FLAG = -shared
-
-# library dependencies
-DEP_LIBS      =
-TEST_DEP_LIBS = unity
-LFLAGS	      = $(call MAP_LFLAGS,$(DEP_LIBS))
-TEST_LFLAGS   = $(call MAP_LFLAGS,$(TEST_DEP_LIBS))
+LFLAGS	    = $(call MAP_LFLAGS,$(DEP_LIBS))
+TEST_LFLAGS = $(call MAP_LFLAGS,$(TEST_DEP_LIBS))
+RM_FLAGS    = -rf
 
 # unity test runner generator script
 GEN_TRNR_BASE = generate_test_runner.rb
@@ -271,4 +273,4 @@ $(foreach module,$(CP_HDR_MODULES),$(eval $(call EXPAND_RULE,$(module),CP_HDR)))
 $(foreach module,$(CP_BIN_MODULES),$(eval $(call EXPAND_RULE,$(module),CP_BIN)))
 
 clean:
-	$(RM) $(ALL_TARGETS)
+	$(RM) $(RM_FLAGS) $(ALL_TARGETS)

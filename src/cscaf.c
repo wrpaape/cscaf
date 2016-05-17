@@ -48,8 +48,12 @@ int main(int argc, char *argv[])
 	strcpy(root, "obj");
 	HANDLE_MKDIR_DEFAULT(path);
 
-	/* ./project/lib */
-	strcpy(root, "lib");
+	/* ./project/shared */
+	strcpy(root, "shared");
+	HANDLE_MKDIR_DEFAULT(path);
+
+	/* ./project/static */
+	strcpy(root, "static");
 	HANDLE_MKDIR_DEFAULT(path);
 
 	/* ./project/src */
