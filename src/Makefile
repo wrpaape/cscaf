@@ -217,7 +217,6 @@ CP_HDR_MODULES    += CSCAF
 CP_BIN_MODULES    += CSCAF
 
 
-
 # make commands
 # ==============================================================================
 # rules
@@ -270,7 +269,6 @@ $(foreach module,$(CP_HDR_MODULES),$(eval $(call EXPAND_RULE,$(module),CP_HDR)))
 # copy binary files to ~/bin
 # ~/bin/<module>
 $(foreach module,$(CP_BIN_MODULES),$(eval $(call EXPAND_RULE,$(module),CP_BIN)))
-
 
 clean:
 	$(RM) $(ALL_TARGETS)

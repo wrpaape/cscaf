@@ -751,13 +751,13 @@ static const char *const SOURCE_TEMPLATE[] = {
 };
 
 /* src/project.h */
-#define HEADER_FILL_COUNT 3ul
+#define HEADER_FILL_COUNT 6ul
 static const enum ProjectNameCase HEADER_FILL_MAP[] = {
-	PROJECT, PROJECT, PROJECT
+	PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT
 };
 static const char *const HEADER_TEMPLATE[] = {
-	"#ifndef ", /* PROJECT */ "_H_"
-	"\n#define ", /* PROJECT */ "_H_"
+	"#ifndef ", /* PROJECT */, "_", /* PROJECT */ "_H_"
+	"\n#define ", /* PROJECT */, "_", /* PROJECT */ "_H_"
 	"\n\n#ifdef __cplusplus /* ensure C linkage */"
 	"\nextern \"C\" {"
 	"\n#ifndef restrict /* replace 'restrict' with c++ compatible '__restrict__' */"
@@ -804,7 +804,7 @@ static const char *const HEADER_TEMPLATE[] = {
 	"\n}"
 	"\n#endif"
 	"\n"
-	"\n#endif /* ifndef ", /* PROJECT */ "_H_ */"
+	"\n#endif /* ifndef ", /* PROJECT */, "_", /* PROJECT */ "_H_ */"
 };
 
 /* src/Makefile */
