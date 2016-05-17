@@ -21,7 +21,7 @@ CP    = cp
 RM    = rm
 
 # library dependencies
-DEP_LIBS      =
+DEP_LIBS      = utils_static
 TEST_DEP_LIBS = unity
 
 # flags

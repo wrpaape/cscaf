@@ -1,5 +1,5 @@
-#ifndef CSCAF_H_
-#define CSCAF_H_
+#ifndef CSCAF_CSCAF_H_
+#define CSCAF_CSCAF_H_
 
 #ifdef __cplusplus /* ensure C linkage */
 extern "C" {
@@ -1125,13 +1125,13 @@ static const char *const INNER_MAKE_TEMPLATE[] = {
 
 
 /* src/test/project_test.c */
-#define TEST_FILL_COUNT 3ul
+#define TEST_FILL_COUNT 2ul
 static const enum ProjectNameCase TEST_FILL_MAP[] = {
-	project, project, project
+	project, project
 };
 static const char *const TEST_TEMPLATE[] = {
 "#include <unity/unity.h>"
-"\n#include <", /* project */ "/", /* project */ ".h>"
+"\n#include \"", /* project */ ".h\""
 "\n"
 "\nvoid setUp(void)"
 "\n{"
@@ -1195,4 +1195,4 @@ static inline char *extend_string(char *restrict buffer,
 }
 #endif
 
-#endif /* ifndef CSCAF_H_ */
+#endif /* ifndef CSCAF_CSCAF_H_ */
