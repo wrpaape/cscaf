@@ -718,11 +718,11 @@ static const char *const LICENSE =
 static const char *const OUTER_MAKE =
 ".PHONY: all clean"
 "\n"
-"\nSRCDIR = src"
-"\nMFLAGS = -j5 LAST=550"
+"\nSRC_DIR = src"
+"\nMFLAGS  = -j5 LAST=550"
 "\n"
 "\nall clean:"
-"\n\t$(MAKE) $(MFLAGS) -C $(SRCDIR) $@"
+"\n\t$(MAKE) $(MFLAGS) -C $(SRC_DIR) $@"
 ;
 
 /* README.md */
@@ -808,7 +808,7 @@ static const char *const HEADER_TEMPLATE[] = {
 };
 
 /* src/Makefile */
-#define INNER_MAKE_FILL_COUNT 82ul
+#define INNER_MAKE_FILL_COUNT 92ul
 static const enum ProjectNameCase INNER_MAKE_FILL_MAP[] = {
 	project, PROJECT, project, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT,
 	PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT,
@@ -819,11 +819,21 @@ static const enum ProjectNameCase INNER_MAKE_FILL_MAP[] = {
 	PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT,
 	PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT,
 	PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT,
-	PROJECT, project, project, project, project, project, project, project,
-	project, project,
+	PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT,
+	PROJECT, PROJECT, PROJECT, project, project, project, project, project,
+	project, project, project, project,
 };
 static const char *const INNER_MAKE_TEMPLATE[] = {
 "\n.PHONY: all clean"
+"\n"
+"\n"
+"\n# environment config"
+"\n# =============================================================================="
+"\n# USER_BIN           = ~/bin                = export binaries dest dir"
+"\n# C_LIBRARY_HEADERS  = ~C_LIBRARIES/include = module mkdir (for header) location"
+"\n# C_SHARED_LIBRARIES = ~C_LIBRARIES/shared  = export shared libraries dest dir"
+"\n# C_STATIC_LIBRARIES = ~C_LIBRARIES/static  = export static libraries dest dir"
+"\n# UNITY_SCRIPTS      = ~C_ROOT/unity/auto   = unity scripts folder"
 "\n"
 "\n"
 "\n# utility config"
@@ -850,9 +860,7 @@ static const char *const INNER_MAKE_TEMPLATE[] = {
 "\nRM_FLAGS    = -rf"
 "\n"
 "\n# unity test runner generator script"
-"\nGEN_TRNR_BASE = generate_test_runner.rb"
-"\nGEN_TRNR_DIR  = $(call PATH_JOIN,$(HOME) my_projects c unity auto)"
-"\nGEN_TRNR_ABS  = $(call PATH_JOIN,$(GEN_TRNR_DIR) $(GEN_TRNR_BASE))"
+"\nGENERATE_TEST_RUNNER = $(call PATH_JOIN,$(UNITY_SCRIPTS) generate_test_runner.rb)"
 "\n"
 "\n"
 "\n# directory config"
@@ -861,20 +869,20 @@ static const char *const INNER_MAKE_TEMPLATE[] = {
 "\nSRC    = src"
 "\n# header files"
 "\nHDR    = $(SRC)"
-"\n# all built object files"
+"\n# all generated object files"
 "\nOBJ    = obj"
-"\n# built module binary files"
+"\n# generated module binary files"
 "\nBIN    = bin"
-"\n# built shared library files"
+"\n# generated shared library files"
 "\nSHARED = shared"
-"\n# built static library files"
+"\n# generated static library files"
 "\nSTATIC = static"
-"\n# test source and built test binary files"
+"\n# test source and generated test binary files"
 "\nTEST   = test"
-"\n# built test_runner source files"
+"\n# generated test_runner source files"
 "\nTRNR   = test_runners"
 "\n"
-"\n# paths relative project root, $(ROOT_DIR)"
+"\n# paths relative project root, 'ROOT_DIR'"
 "\nROOT_DIR      = .."
 "\nSRC_DIR       = $(call PATH_JOIN,$(ROOT_DIR) $(SRC))"
 "\nHDR_DIR       = $(call PATH_JOIN,$(ROOT_DIR) $(HDR))"
@@ -910,8 +918,6 @@ static const char *const INNER_MAKE_TEMPLATE[] = {
 "\nSHARED_PFX    = $(LIB_PFX)"
 "\nSTATIC_PFX    = $(LIB_PFX)"
 "\nMKDIR_HDR_PFX = $(EMPTY)"
-"\nCP_BIN_PFX    = $(BIN_PFX)"
-"\nCP_HDR_PFX    = $(HDR_PFX)"
 "\n"
 "\n# suffixes (including extensions)"
 "\nSRC_SFX       = .c"
@@ -927,8 +933,6 @@ static const char *const INNER_MAKE_TEMPLATE[] = {
 "\nSHARED_SFX    = $(call CONCAT,_ $(SHARED) .so)"
 "\nSTATIC_SFX    = $(call CONCAT,_ $(STATIC) .a)"
 "\nMKDIR_HDR_SFX = $(EMPTY)"
-"\nCP_BIN_SFX    = $(BIN_SFX)"
-"\nCP_HDR_SFX    = $(HDR_SFX)"
 "\n"
 "\n"
 "\n# functions"
@@ -959,11 +963,12 @@ static const char *const INNER_MAKE_TEMPLATE[] = {
 "\n# =============================================================================="
 "\n# list of all make targets"
 "\nTARGET_TYPES = TRNR_SRC OBJ PIC_OBJ TRNR_OBJ TEST_OBJ BIN TEST_BIN \\"
-"\n               SHARED STATIC MKDIR_HDR CP_HDR CP_BIN"
+"\n               SHARED STATIC MKDIR_HDR CP_HDR CP_BIN CP_SHARED     \\"
+"\n               CP_STATIC"
 "\nALL_TARGETS  = $(foreach type,$(TARGET_TYPES),$(call EXPAND_TARGETS,$(type)))"
 "\n"
 "\n# make recipes"
-"\nTRNR_SRC_RECIPE  = $(RUBY) $(GEN_TRNR_ABS) $$< $$@"
+"\nTRNR_SRC_RECIPE  = $(RUBY) $(GENERATE_TEST_RUNNER) $$< $$@"
 "\nOBJ_RECIPE       = $(CC) $(CFLAGS) -c -o $$@ $$< $(LFLAGS)"
 "\nPIC_OBJ_RECIPE   = $(OBJ_RECIPE) $(PIC_FLAG)"
 "\nTRNR_OBJ_RECIPE  = $(OBJ_RECIPE)"
@@ -973,8 +978,10 @@ static const char *const INNER_MAKE_TEMPLATE[] = {
 "\nSTATIC_RECIPE    = $(AR) $(ARFLAGS) $$@ $$^"
 "\nSHARED_RECIPE    = $(BIN_RECIPE) $(SHARED_FLAG)"
 "\nMKDIR_HDR_RECIPE = $(MKDIR) $$@"
-"\nCP_HDR_RECIPE    = $(CP_BIN_RECIPE)"
-"\nCP_BIN_RECIPE    = $(CP) $$< $$@"
+"\nCP_HDR_RECIPE    = $(CP) $$< $$@"
+"\nCP_BIN_RECIPE    = $(CP_HDR_RECIPE)"
+"\nCP_SHARED_RECIPE = $(CP_HDR_RECIPE)"
+"\nCP_STATIC_RECIPE = $(CP_HDR_RECIPE)"
 "\n"
 "\n# misc"
 "\nEMPTY ="
@@ -1012,6 +1019,8 @@ static const char *const INNER_MAKE_TEMPLATE[] = {
 "\n", /* PROJECT */ "_MKDIR_HDR = $(call EXPAND_PATH,$(C_LIBRARY_HEADERS),$(", /* PROJECT */ "),MKDIR_HDR)"
 "\n", /* PROJECT */ "_CP_HDR    = $(call EXPAND_PATH,$(", /* PROJECT */ "_MKDIR_HDR),$(", /* PROJECT */ "),HDR)"
 "\n", /* PROJECT */ "_CP_BIN    = $(call EXPAND_PATH,$(USER_BIN),$(", /* PROJECT */ "),BIN)"
+"\n", /* PROJECT */ "_CP_SHARED = $(call EXPAND_PATH,$(C_SHARED_LIBRARIES),$(", /* PROJECT */ "),SHARED)"
+"\n", /* PROJECT */ "_CP_STATIC = $(call EXPAND_PATH,$(C_STATIC_LIBRARIES),$(", /* PROJECT */ "),STATIC)"
 "\n"
 "\n"
 "\n# module target dependencies"
@@ -1027,6 +1036,8 @@ static const char *const INNER_MAKE_TEMPLATE[] = {
 "\n", /* PROJECT */ "_MKDIR_HDR_DEP = $(EMPTY)"
 "\n", /* PROJECT */ "_CP_HDR_DEP    = $(", /* PROJECT */ "_HDR) $(", /* PROJECT */ "_MKDIR_HDR)"
 "\n", /* PROJECT */ "_CP_BIN_DEP    = $(", /* PROJECT */ "_BIN)"
+"\n", /* PROJECT */ "_CP_SHARED_DEP = $(", /* PROJECT */ "_SHARED)"
+"\n", /* PROJECT */ "_CP_STATIC_DEP = $(", /* PROJECT */ "_STATIC)"
 "\n"
 "\n# update target groups"
 "\nTRNR_SRC_MODULES  += ", /* PROJECT */
@@ -1041,6 +1052,8 @@ static const char *const INNER_MAKE_TEMPLATE[] = {
 "\nMKDIR_HDR_MODULES += ", /* PROJECT */
 "\nCP_HDR_MODULES    += ", /* PROJECT */
 "\nCP_BIN_MODULES    += ", /* PROJECT */
+"\nCP_SHARED_MODULES += ", /* PROJECT */
+"\nCP_STATIC_MODULES += ", /* PROJECT */
 "\n"
 "\n"
 "\n# make commands"
@@ -1084,17 +1097,25 @@ static const char *const INNER_MAKE_TEMPLATE[] = {
 "\n# ", /* project */ "/shared/lib<module>_static.a"
 "\n$(foreach module,$(STATIC_MODULES),$(eval $(call EXPAND_RULE,$(module),STATIC)))"
 "\n"
-"\n# make directories at root of header file include path  ~C_LIBRARY_HEADERS"
+"\n# make directories at root of header file include path, 'C_LIBRARY_HEADERS'"
 "\n# ~C_LIBRARY_HEADERS/<module>"
 "\n$(foreach module,$(CP_HDR_MODULES),$(eval $(call EXPAND_RULE,$(module),MKDIR_HDR)))"
 "\n"
-"\n# copy header files to ~C_LIBRARY_HEADERS/<module>"
+"\n# copy header files to module include path"
 "\n# ~C_LIBRARY_HEADERS/<module>/<module>.h"
 "\n$(foreach module,$(CP_HDR_MODULES),$(eval $(call EXPAND_RULE,$(module),CP_HDR)))"
 "\n"
-"\n# copy binary files to ~/bin"
-"\n# ~/bin/<module>"
+"\n# copy binary files to 'USER_BIN'"
+"\n# ~USER_BIN/<module>"
 "\n$(foreach module,$(CP_BIN_MODULES),$(eval $(call EXPAND_RULE,$(module),CP_BIN)))"
+"\n"
+"\n# copy shared library files to 'C_SHARED_LIBRARIES'"
+"\n# ~C_SHARED_LIBRARIES/lib<module>_shared.so"
+"\n$(foreach module,$(CP_SHARED_MODULES),$(eval $(call EXPAND_RULE,$(module),CP_SHARED)))"
+"\n"
+"\n# copy static library files to 'C_STATIC_LIBRARIES'"
+"\n# ~C_STATIC_LIBRARIES/lib<module>_static.a"
+"\n$(foreach module,$(CP_STATIC_MODULES),$(eval $(call EXPAND_RULE,$(module),CP_STATIC)))"
 "\n"
 "\nclean:"
 "\n\t$(RM) $(RM_FLAGS) $(ALL_TARGETS)"
