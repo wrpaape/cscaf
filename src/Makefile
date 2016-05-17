@@ -22,7 +22,7 @@ RM    = rm
 
 # library dependencies
 DEP_LIBS      = utils_static
-TEST_DEP_LIBS = unity
+TEST_DEP_LIBS = unity_shared
 
 # flags
 CFLAGS      = -g -I$(HDR_DIR) -std=c99 -Wall -D__USE_FIXED_PROTOTYPES__
@@ -216,18 +216,18 @@ CSCAF_CP_STATIC_DEP = $(CSCAF_STATIC)
 # update target groups
 TRNR_SRC_MODULES  += CSCAF
 OBJ_MODULES       += CSCAF
-PIC_OBJ_MODULES   += CSCAF
+# PIC_OBJ_MODULES   += CSCAF
 TRNR_OBJ_MODULES  += CSCAF
 TEST_OBJ_MODULES  += CSCAF
 BIN_MODULES       += CSCAF
 TEST_BIN_MODULES  += CSCAF
-SHARED_MODULES    += CSCAF
-STATIC_MODULES    += CSCAF
-MKDIR_HDR_MODULES += CSCAF
-CP_HDR_MODULES    += CSCAF
+# SHARED_MODULES    += CSCAF
+# STATIC_MODULES    += CSCAF
+# MKDIR_HDR_MODULES += CSCAF
+# CP_HDR_MODULES    += CSCAF
 CP_BIN_MODULES    += CSCAF
-CP_SHARED_MODULES += CSCAF
-CP_STATIC_MODULES += CSCAF
+# CP_SHARED_MODULES += CSCAF
+# CP_STATIC_MODULES += CSCAF
 
 
 # make commands
@@ -273,7 +273,7 @@ $(foreach module,$(STATIC_MODULES),$(eval $(call EXPAND_RULE,$(module),STATIC)))
 
 # make directories at root of header file include path, 'C_LIBRARY_HEADERS'
 # ~C_LIBRARY_HEADERS/<module>
-$(foreach module,$(CP_HDR_MODULES),$(eval $(call EXPAND_RULE,$(module),MKDIR_HDR)))
+$(foreach module,$(MKDIR_HDR_MODULES),$(eval $(call EXPAND_RULE,$(module),MKDIR_HDR)))
 
 # copy header files to module include path
 # ~C_LIBRARY_HEADERS/<module>/<module>.h

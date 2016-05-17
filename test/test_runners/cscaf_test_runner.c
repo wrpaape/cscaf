@@ -19,13 +19,15 @@
 }
 
 //=======Automagically Detected Files To Include=====
-#include <unity.h>
+#include <unity/unity.h>
 #include <setjmp.h>
 #include <stdio.h>
+#include "cscaf.h"
 
 //=======External Functions This Runner Calls=====
 extern void setUp(void);
 extern void tearDown(void);
+extern void test_cscaf(void);
 
 
 //=======Test Reset Option=====
@@ -41,6 +43,7 @@ void resetTest(void)
 int main(void)
 {
   UnityBegin("../test/cscaf_test.c");
+  RUN_TEST(test_cscaf, 12);
 
   return (UnityEnd());
 }
