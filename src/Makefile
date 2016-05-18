@@ -25,13 +25,14 @@ DEP_LIBS      = string_utils_static
 TEST_DEP_LIBS = unity_shared
 
 # flags
-CFLAGS      = -g -I$(HDR_DIR) -std=c99 -Wall -D__USE_FIXED_PROTOTYPES__
-ARFLAGS     = rcs
-PIC_FLAG    = -fpic
-SHARED_FLAG = -shared
-LFLAGS	    = $(call MAP_LFLAGS,$(DEP_LIBS))
-TEST_LFLAGS = $(call MAP_LFLAGS,$(TEST_DEP_LIBS))
-RM_FLAGS    = -rf
+C_FLAGS      = -g -I$(HDR_DIR) -std=c99 -Wall -D__USE_FIXED_PROTOTYPES__
+LD_FLAGS     = -L$(C_STATIC_LIBRARIES) -L$(C_SHARED_LIBRARIES) -Wl,-rpath,$(C_SHARED_LIBRARIES)
+AR_FLAGS     = rcs
+PIC_FLAG     = -fpic
+SHARED_FLAG  = -shared
+L_FLAGS	     = $(call MAP_LFLAGS,$(DEP_LIBS))
+TEST_L_FLAGS = $(call MAP_LFLAGS,$(TEST_DEP_LIBS))
+RM_FLAGS     = -rf
 
 # unity test runner generator script
 GENERATE_TEST_RUNNER = $(call PATH_JOIN,$(UNITY_SCRIPTS) generate_test_runner.rb)
@@ -39,10 +40,10 @@ GENERATE_TEST_RUNNER = $(call PATH_JOIN,$(UNITY_SCRIPTS) generate_test_runner.rb
 
 # directory config
 # ==============================================================================
-# source files
-SRC      = src
 # header files
 HDR      = $(SRC)
+# source files
+SRC      = src
 # main source files
 MAIN_SRC = $(SRC)
 # all generated object files
@@ -60,8 +61,8 @@ TRNR_SRC = test_runners
 
 # paths relative project root, 'ROOT_DIR'
 ROOT_DIR      = ..
-SRC_DIR       = $(call PATH_JOIN,$(ROOT_DIR) $(SRC))
 HDR_DIR       = $(call PATH_JOIN,$(ROOT_DIR) $(HDR))
+SRC_DIR       = $(call PATH_JOIN,$(ROOT_DIR) $(SRC))
 MAIN_SRC_DIR  = $(call PATH_JOIN,$(ROOT_DIR) $(MAIN_SRC))
 TEST_SRC_DIR  = $(call PATH_JOIN,$(ROOT_DIR) $(TEST))
 TRNR_SRC_DIR  = $(call PATH_JOIN,$(TEST_SRC_DIR) $(TRNR_SRC))
@@ -83,8 +84,8 @@ TEST_SFX = _test
 TRNR_SFX = _test_runner
 
 # prefixes
-SRC_PFX       = $(EMPTY)
 HDR_PFX       = $(EMPTY)
+SRC_PFX       = $(EMPTY)
 MAIN_SRC_PFX  = $(EMPTY)
 TEST_SRC_PFX  = $(EMPTY)
 TRNR_SRC_PFX  = $(EMPTY)
@@ -99,8 +100,8 @@ STATIC_PFX    = $(LIB_PFX)
 MKDIR_HDR_PFX = $(EMPTY)
 
 # suffixes (including extensions)
-SRC_SFX       = .c
 HDR_SFX       = .h
+SRC_SFX       = .c
 MAIN_SRC_SFX  = $(call CONCAT,$(MAIN_SFX) $(SRC_SFX))
 TEST_SRC_SFX  = $(call CONCAT,$(TEST_SFX) $(SRC_SFX))
 TRNR_SRC_SFX  = $(call CONCAT,$(TRNR_SFX) $(SRC_SFX))
@@ -141,21 +142,23 @@ EXPAND_RULE 	= $(call EXPAND_DEP_LINE,$1,$2)$(CMD_SPACE)$(call EXPAND_RECIPE,$2)
 
 # placeholders
 # ==============================================================================
-# list of all make targets
+# make target types
 TARGET_TYPES = TRNR_SRC OBJ PIC_OBJ TRNR_OBJ TEST_OBJ BIN TEST_BIN	\
 	       SHARED STATIC MKDIR_HDR CP_HDR CP_BIN CP_SHARED		\
 	       CP_STATIC
+
+# list of all make targets
 ALL_TARGETS  = $(foreach type,$(TARGET_TYPES),$(call EXPAND_TARGETS,$(type)))
 
 # make recipes
 TRNR_SRC_RECIPE	 = $(RUBY) $(GENERATE_TEST_RUNNER) $$< $$@
-OBJ_RECIPE 	 = $(CC) $(CFLAGS) -c -o $$@ $$<
+OBJ_RECIPE 	 = $(CC) $(C_FLAGS) -c -o $$@ $$<
 PIC_OBJ_RECIPE   = $(OBJ_RECIPE) $(PIC_FLAG)
 TRNR_OBJ_RECIPE  = $(OBJ_RECIPE)
 TEST_OBJ_RECIPE  = $(OBJ_RECIPE)
-BIN_RECIPE 	 = $(CC) $(CFLAGS) -o $$@ $$^ $(LFLAGS)
-TEST_BIN_RECIPE  = $(BIN_RECIPE) $(TEST_LFLAGS)
-STATIC_RECIPE 	 = $(AR) $(ARFLAGS) $$@ $$^
+BIN_RECIPE       = $(CC) $(C_FLAGS) -o $$@ $$^ $(LD_FLAGS) $(L_FLAGS)
+TEST_BIN_RECIPE  = $(BIN_RECIPE) $(TEST_L_FLAGS)
+STATIC_RECIPE 	 = $(AR) $(AR_FLAGS) $$@ $$^
 SHARED_RECIPE 	 = $(BIN_RECIPE) $(SHARED_FLAG)
 MKDIR_HDR_RECIPE = $(MKDIR) $$@
 CP_HDR_RECIPE 	 = $(CP) $$< $$@
@@ -181,9 +184,9 @@ PATH_DELIM = /
 # module name
 CSCAF = cscaf
 
-# source files
-CSCAF_SRC      = $(call EXPAND_DIR_PATH,$(CSCAF),SRC)
+# module source files
 CSCAF_HDR      = $(call EXPAND_DIR_PATH,$(CSCAF),HDR)
+CSCAF_SRC      = $(call EXPAND_DIR_PATH,$(CSCAF),SRC)
 CSCAF_MAIN_SRC = $(call EXPAND_DIR_PATH,$(CSCAF),MAIN_SRC)
 CSCAF_TEST_SRC = $(call EXPAND_DIR_PATH,$(CSCAF),TEST_SRC)
 

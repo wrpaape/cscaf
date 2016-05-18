@@ -762,7 +762,7 @@ static const char *const MAIN_TEMPLATE[] = {
 "\n"
 "\nint main(int argc, char *argv[])"
 "\n{"
-"\n\tprintf(\"", /* project */ "() = %d\n\", ", /* project */ "());"
+"\n\tprintf(\"", /* project */ "() = %d\\n\", ", /* project */ "());"
 "\n"
 "\n\treturn 0;"
 "\n}"
@@ -810,9 +810,9 @@ static const char *const HEADER_TEMPLATE[] = {
 "\n *"
 "\n * TOP-LEVEL FUNCTIONS"
 "\n * ▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼ */"
-"\n *"
+"\n"
 "\nint ", /* project */ "(void);"
-"\n *"
+"\n"
 "\n/* ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲"
 "\n * TOP-LEVEL FUNCTIONS"
 "\n *"
@@ -831,7 +831,7 @@ static const char *const HEADER_TEMPLATE[] = {
 };
 
 /* src/Makefile */
-#define INNER_MAKE_FILL_COUNT 93ul
+#define INNER_MAKE_FILL_COUNT 96ul
 static const enum ProjectNameCase INNER_MAKE_FILL_MAP[] = {
 	project, PROJECT, project, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT,
 	PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT,
@@ -843,8 +843,8 @@ static const enum ProjectNameCase INNER_MAKE_FILL_MAP[] = {
 	PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT,
 	PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT,
 	PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT,
-	PROJECT, PROJECT, PROJECT, PROJECT, project, project, project, project,
-	project, project, project, project, project
+	PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, project,
+	project, project, project, project, project, project, project, project
 };
 static const char *const INNER_MAKE_TEMPLATE[] = {
 ".PHONY: all clean"
@@ -888,27 +888,30 @@ static const char *const INNER_MAKE_TEMPLATE[] = {
 "\n"
 "\n# directory config"
 "\n# =============================================================================="
-"\n# source files"
-"\nSRC    = src"
 "\n# header files"
-"\nHDR    = $(SRC)"
+"\nHDR      = $(SRC)"
+"\n# source files"
+"\nSRC      = src"
+"\n# main source files"
+"\nMAIN_SRC = $(SRC)"
 "\n# all generated object files"
-"\nOBJ    = obj"
+"\nOBJ      = obj"
 "\n# generated module binary files"
-"\nBIN    = bin"
+"\nBIN      = bin"
 "\n# generated shared library files"
-"\nSHARED = shared"
+"\nSHARED   = shared"
 "\n# generated static library files"
-"\nSTATIC = static"
+"\nSTATIC   = static"
 "\n# test source and generated test binary files"
-"\nTEST   = test"
+"\nTEST     = test"
 "\n# generated test_runner source files"
-"\nTRNR   = test_runners"
+"\nTRNR_SRC = test_runners"
 "\n"
 "\n# paths relative project root, 'ROOT_DIR'"
 "\nROOT_DIR      = .."
-"\nSRC_DIR       = $(call PATH_JOIN,$(ROOT_DIR) $(SRC))"
 "\nHDR_DIR       = $(call PATH_JOIN,$(ROOT_DIR) $(HDR))"
+"\nSRC_DIR       = $(call PATH_JOIN,$(ROOT_DIR) $(SRC))"
+"\nMAIN_SRC_DIR  = $(call PATH_JOIN,$(ROOT_DIR) $(MAIN_SRC))"
 "\nTEST_SRC_DIR  = $(call PATH_JOIN,$(ROOT_DIR) $(TEST))"
 "\nTRNR_SRC_DIR  = $(call PATH_JOIN,$(TEST_SRC_DIR) $(TRNR))"
 "\nOBJ_DIR       = $(call PATH_JOIN,$(ROOT_DIR) $(OBJ))"
@@ -924,12 +927,14 @@ static const char *const INNER_MAKE_TEMPLATE[] = {
 "\n# filename config"
 "\n# =============================================================================="
 "\nLIB_PFX  = lib"
+"\nMAIN_SFX = _main"
 "\nTEST_SFX = _test"
 "\nTRNR_SFX = _test_runner"
 "\n"
 "\n# prefixes"
-"\nSRC_PFX       = $(EMPTY)"
 "\nHDR_PFX       = $(EMPTY)"
+"\nSRC_PFX       = $(EMPTY)"
+"\nMAIN_SRC_PFX  = $(EMPTY)"
 "\nTEST_SRC_PFX  = $(EMPTY)"
 "\nTRNR_SRC_PFX  = $(EMPTY)"
 "\nOBJ_PFX       = $(EMPTY)"
@@ -943,8 +948,9 @@ static const char *const INNER_MAKE_TEMPLATE[] = {
 "\nMKDIR_HDR_PFX = $(EMPTY)"
 "\n"
 "\n# suffixes (including extensions)"
-"\nSRC_SFX       = .c"
 "\nHDR_SFX       = .h"
+"\nSRC_SFX       = .c"
+"\nMAIN_SRC_SFX  = $(call CONCAT,$(MAIN_SFX) $(SRC_SFX))"
 "\nTEST_SRC_SFX  = $(call CONCAT,$(TEST_SFX) $(SRC_SFX))"
 "\nTRNR_SRC_SFX  = $(call CONCAT,$(TRNR_SFX) $(SRC_SFX))"
 "\nOBJ_SFX       = .o"
@@ -1026,10 +1032,10 @@ static const char *const INNER_MAKE_TEMPLATE[] = {
 "\n# module name"
 "\n", /* PROJECT */ " = ", /* project */ ""
 "\n"
-"\n# source files"
-"\n", /* PROJECT */ "_SRC      = $(call EXPAND_DIR_PATH,$(", /* PROJECT */ "),SRC)"
+"\n# module source files"
 "\n", /* PROJECT */ "_HDR      = $(call EXPAND_DIR_PATH,$(", /* PROJECT */ "),HDR)"
-"\n", /* PROJECT */ "_MAIN     = $(call EXPAND_DIR_PATH,$(", /* PROJECT */ "),MAIN)"
+"\n", /* PROJECT */ "_SRC      = $(call EXPAND_DIR_PATH,$(", /* PROJECT */ "),SRC)"
+"\n", /* PROJECT */ "_MAIN_SRC = $(call EXPAND_DIR_PATH,$(", /* PROJECT */ "),MAIN_SRC)"
 "\n", /* PROJECT */ "_TEST_SRC = $(call EXPAND_DIR_PATH,$(", /* PROJECT */ "),TEST_SRC)"
 "\n"
 "\n# module targets"
@@ -1054,7 +1060,7 @@ static const char *const INNER_MAKE_TEMPLATE[] = {
 "\n", /* PROJECT */ "_PIC_OBJ_DEP   = $(", /* PROJECT */ "_OBJ_DEP)"
 "\n", /* PROJECT */ "_TRNR_OBJ_DEP  = $(", /* PROJECT */ "_TRNR_SRC)"
 "\n", /* PROJECT */ "_TEST_OBJ_DEP  = $(", /* PROJECT */ "_TEST_SRC) $(", /* PROJECT */ "_OBJ_DEP)"
-"\n", /* PROJECT */ "_BIN_DEP       = $(", /* PROJECT */ " $(", /* PROJECT */ "_OBJ)"
+"\n", /* PROJECT */ "_BIN_DEP       = $(", /* PROJECT */ "_MAIN_SRC) $(", /* PROJECT */ "_OBJ)"
 "\n", /* PROJECT */ "_TEST_BIN_DEP  = $(", /* PROJECT */ "_TEST_OBJ) $(", /* PROJECT */ "_TRNR_OBJ) $(", /* PROJECT */ "_OBJ)"
 "\n", /* PROJECT */ "_SHARED_DEP    = $(", /* PROJECT */ "_PIC_OBJ)"
 "\n", /* PROJECT */ "_STATIC_DEP    = $(", /* PROJECT */ "_OBJ)"
