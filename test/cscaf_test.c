@@ -9,7 +9,9 @@ void tearDown(void)
 {
 }
 
-void test_cscaf(void)
+void test_capitalize_string(void)
 {
-	TEST_IGNORE();
+	char *const string = "booga";
+
+	TEST_ASSERT_EQUAL_STRING("BOOGA", capitalize_string(string));
 }

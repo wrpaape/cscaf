@@ -27,7 +27,7 @@
 //=======External Functions This Runner Calls=====
 extern void setUp(void);
 extern void tearDown(void);
-extern void test_cscaf(void);
+extern void test_capitalize_string(void);
 
 
 //=======Test Reset Option=====
@@ -43,7 +43,7 @@ void resetTest(void)
 int main(void)
 {
   UnityBegin("../test/cscaf_test.c");
-  RUN_TEST(test_cscaf, 12);
+  RUN_TEST(test_capitalize_string, 12);
 
   return (UnityEnd());
 }

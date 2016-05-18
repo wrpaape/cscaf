@@ -21,7 +21,7 @@ CP    = cp
 RM    = rm
 
 # library dependencies
-DEP_LIBS      = utils_static
+DEP_LIBS      = string_utils_static
 TEST_DEP_LIBS = unity_shared
 
 # flags
@@ -40,28 +40,31 @@ GENERATE_TEST_RUNNER = $(call PATH_JOIN,$(UNITY_SCRIPTS) generate_test_runner.rb
 # directory config
 # ==============================================================================
 # source files
-SRC    = src
+SRC      = src
 # header files
-HDR    = $(SRC)
+HDR      = $(SRC)
+# main source files
+MAIN_SRC = $(SRC)
 # all generated object files
-OBJ    = obj
+OBJ      = obj
 # generated module binary files
-BIN    = bin
+BIN      = bin
 # generated shared library files
-SHARED = shared
+SHARED   = shared
 # generated static library files
-STATIC = static
+STATIC   = static
 # test source and generated test binary files
-TEST   = test
+TEST     = test
 # generated test_runner source files
-TRNR   = test_runners
+TRNR_SRC = test_runners
 
 # paths relative project root, 'ROOT_DIR'
 ROOT_DIR      = ..
 SRC_DIR       = $(call PATH_JOIN,$(ROOT_DIR) $(SRC))
 HDR_DIR       = $(call PATH_JOIN,$(ROOT_DIR) $(HDR))
+MAIN_SRC_DIR  = $(call PATH_JOIN,$(ROOT_DIR) $(MAIN_SRC))
 TEST_SRC_DIR  = $(call PATH_JOIN,$(ROOT_DIR) $(TEST))
-TRNR_SRC_DIR  = $(call PATH_JOIN,$(TEST_SRC_DIR) $(TRNR))
+TRNR_SRC_DIR  = $(call PATH_JOIN,$(TEST_SRC_DIR) $(TRNR_SRC))
 OBJ_DIR	      = $(call PATH_JOIN,$(ROOT_DIR) $(OBJ))
 PIC_OBJ_DIR   = $(OBJ_DIR)
 TEST_OBJ_DIR  = $(OBJ_DIR)
@@ -75,12 +78,14 @@ STATIC_DIR    = $(call PATH_JOIN,$(ROOT_DIR) $(STATIC))
 # filename config
 # ==============================================================================
 LIB_PFX	 = lib
+MAIN_SFX = _main
 TEST_SFX = _test
 TRNR_SFX = _test_runner
 
 # prefixes
 SRC_PFX       = $(EMPTY)
 HDR_PFX       = $(EMPTY)
+MAIN_SRC_PFX  = $(EMPTY)
 TEST_SRC_PFX  = $(EMPTY)
 TRNR_SRC_PFX  = $(EMPTY)
 OBJ_PFX       = $(EMPTY)
@@ -96,6 +101,7 @@ MKDIR_HDR_PFX = $(EMPTY)
 # suffixes (including extensions)
 SRC_SFX       = .c
 HDR_SFX       = .h
+MAIN_SRC_SFX  = $(call CONCAT,$(MAIN_SFX) $(SRC_SFX))
 TEST_SRC_SFX  = $(call CONCAT,$(TEST_SFX) $(SRC_SFX))
 TRNR_SRC_SFX  = $(call CONCAT,$(TRNR_SFX) $(SRC_SFX))
 OBJ_SFX       = .o
@@ -178,6 +184,7 @@ CSCAF = cscaf
 # source files
 CSCAF_SRC      = $(call EXPAND_DIR_PATH,$(CSCAF),SRC)
 CSCAF_HDR      = $(call EXPAND_DIR_PATH,$(CSCAF),HDR)
+CSCAF_MAIN_SRC = $(call EXPAND_DIR_PATH,$(CSCAF),MAIN_SRC)
 CSCAF_TEST_SRC = $(call EXPAND_DIR_PATH,$(CSCAF),TEST_SRC)
 
 # module targets
@@ -202,8 +209,8 @@ CSCAF_OBJ_DEP       = $(CSCAF_SRC) $(CSCAF_HDR)
 CSCAF_PIC_OBJ_DEP   = $(CSCAF_OBJ_DEP)
 CSCAF_TRNR_OBJ_DEP  = $(CSCAF_TRNR_SRC)
 CSCAF_TEST_OBJ_DEP  = $(CSCAF_TEST_SRC) $(CSCAF_OBJ_DEP)
-CSCAF_BIN_DEP	    = $(CSCAF_OBJ)
-CSCAF_TEST_BIN_DEP  = $(CSCAF_TEST_OBJ) $(CSCAF_TRNR_OBJ)
+CSCAF_BIN_DEP	    = $(CSCAF_MAIN_SRC) $(CSCAF_OBJ)
+CSCAF_TEST_BIN_DEP  = $(CSCAF_TEST_OBJ) $(CSCAF_TRNR_OBJ) $(CSCAF_OBJ)
 CSCAF_SHARED_DEP    = $(CSCAF_PIC_OBJ)
 CSCAF_STATIC_DEP    = $(CSCAF_OBJ)
 CSCAF_MKDIR_HDR_DEP = $(EMPTY)
@@ -229,7 +236,7 @@ CP_BIN_MODULES    += CSCAF
 # CP_STATIC_MODULES += CSCAF
 
 
-# make commands
+# make rules
 # ==============================================================================
 # rules
 all: $(ALL_TARGETS)

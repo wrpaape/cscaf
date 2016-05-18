@@ -11,7 +11,8 @@ extern "C" {
 /* EXTERNAL DEPENDENCIES
  * ▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼ */
 
-#include <utils/handle_file.h>	/* EXIT_ON_FAILURE, misc error handlers */
+#include <utils/handle_file.h>		/* EXIT_ON_FAILURE, misc error handlers */
+#include <string_utils/string_utils.h>	/* capitalize_string, extend_string */
 
 /* ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
  * EXTERNAL DEPENDENCIES
@@ -737,23 +738,40 @@ static const char *const README_TEMPLATE[] = {
 };
 
 /* src/project.c */
-#define SOURCE_FILL_COUNT 1ul
+#define SOURCE_FILL_COUNT 2ul
 static const enum ProjectNameCase SOURCE_FILL_MAP[] = {
-	project
+	project, project
 };
 static const char *const SOURCE_TEMPLATE[] = {
 "#include \"", /* project */ ".h\""
 "\n"
+"\nint ", /* project */ "(void)"
+"\n{"
+"\n\treturn 42;"
+"\n}"
+};
+
+/* src/project_main.c */
+#define MAIN_FILL_COUNT 3ul
+static const enum ProjectNameCase MAIN_FILL_MAP[] = {
+	project, project, project
+};
+static const char *const MAIN_TEMPLATE[] = {
+"#include <stdio.h>"
+"\n#include \"", /* project */ ".h\""
+"\n"
 "\nint main(int argc, char *argv[])"
 "\n{"
+"\n\tprintf(\"", /* project */ "() = %d\n\", ", /* project */ "());"
+"\n"
 "\n\treturn 0;"
 "\n}"
 };
 
 /* src/project.h */
-#define HEADER_FILL_COUNT 6ul
+#define HEADER_FILL_COUNT 7ul
 static const enum ProjectNameCase HEADER_FILL_MAP[] = {
-	PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT
+	PROJECT, PROJECT, PROJECT, PROJECT, project, PROJECT, PROJECT
 };
 static const char *const HEADER_TEMPLATE[] = {
 "#ifndef ", /* PROJECT */ "_", /* PROJECT */ "_H_"
@@ -764,6 +782,7 @@ static const char *const HEADER_TEMPLATE[] = {
 "\n#define restrict __restrict__"
 "\n#endif"
 "\n#endif"
+"\n"
 "\n"
 "\n/* EXTERNAL DEPENDENCIES"
 "\n * ▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼ */"
@@ -791,6 +810,9 @@ static const char *const HEADER_TEMPLATE[] = {
 "\n *"
 "\n * TOP-LEVEL FUNCTIONS"
 "\n * ▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼ */"
+"\n *"
+"\nint ", /* project */ "(void);"
+"\n *"
 "\n/* ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲"
 "\n * TOP-LEVEL FUNCTIONS"
 "\n *"
@@ -800,6 +822,7 @@ static const char *const HEADER_TEMPLATE[] = {
 "\n/* ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲"
 "\n * HELPER FUNCTIONS */"
 "\n"
+"\n"
 "\n#ifdef __cplusplus /* close 'extern \"C\" {' */"
 "\n}"
 "\n#endif"
@@ -808,7 +831,7 @@ static const char *const HEADER_TEMPLATE[] = {
 };
 
 /* src/Makefile */
-#define INNER_MAKE_FILL_COUNT 92ul
+#define INNER_MAKE_FILL_COUNT 93ul
 static const enum ProjectNameCase INNER_MAKE_FILL_MAP[] = {
 	project, PROJECT, project, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT,
 	PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT,
@@ -820,11 +843,11 @@ static const enum ProjectNameCase INNER_MAKE_FILL_MAP[] = {
 	PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT,
 	PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT,
 	PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT, PROJECT,
-	PROJECT, PROJECT, PROJECT, project, project, project, project, project,
-	project, project, project, project,
+	PROJECT, PROJECT, PROJECT, PROJECT, project, project, project, project,
+	project, project, project, project, project
 };
 static const char *const INNER_MAKE_TEMPLATE[] = {
-"\n.PHONY: all clean"
+".PHONY: all clean"
 "\n"
 "\n"
 "\n# environment config"
@@ -1006,6 +1029,7 @@ static const char *const INNER_MAKE_TEMPLATE[] = {
 "\n# source files"
 "\n", /* PROJECT */ "_SRC      = $(call EXPAND_DIR_PATH,$(", /* PROJECT */ "),SRC)"
 "\n", /* PROJECT */ "_HDR      = $(call EXPAND_DIR_PATH,$(", /* PROJECT */ "),HDR)"
+"\n", /* PROJECT */ "_MAIN     = $(call EXPAND_DIR_PATH,$(", /* PROJECT */ "),MAIN)"
 "\n", /* PROJECT */ "_TEST_SRC = $(call EXPAND_DIR_PATH,$(", /* PROJECT */ "),TEST_SRC)"
 "\n"
 "\n# module targets"
@@ -1030,8 +1054,8 @@ static const char *const INNER_MAKE_TEMPLATE[] = {
 "\n", /* PROJECT */ "_PIC_OBJ_DEP   = $(", /* PROJECT */ "_OBJ_DEP)"
 "\n", /* PROJECT */ "_TRNR_OBJ_DEP  = $(", /* PROJECT */ "_TRNR_SRC)"
 "\n", /* PROJECT */ "_TEST_OBJ_DEP  = $(", /* PROJECT */ "_TEST_SRC) $(", /* PROJECT */ "_OBJ_DEP)"
-"\n", /* PROJECT */ "_BIN_DEP       = $(", /* PROJECT */ "_OBJ)"
-"\n", /* PROJECT */ "_TEST_BIN_DEP  = $(", /* PROJECT */ "_TEST_OBJ) $(", /* PROJECT */ "_TRNR_OBJ)"
+"\n", /* PROJECT */ "_BIN_DEP       = $(", /* PROJECT */ " $(", /* PROJECT */ "_OBJ)"
+"\n", /* PROJECT */ "_TEST_BIN_DEP  = $(", /* PROJECT */ "_TEST_OBJ) $(", /* PROJECT */ "_TRNR_OBJ) $(", /* PROJECT */ "_OBJ)"
 "\n", /* PROJECT */ "_SHARED_DEP    = $(", /* PROJECT */ "_PIC_OBJ)"
 "\n", /* PROJECT */ "_STATIC_DEP    = $(", /* PROJECT */ "_OBJ)"
 "\n", /* PROJECT */ "_MKDIR_HDR_DEP = $(EMPTY)"
@@ -1057,9 +1081,9 @@ static const char *const INNER_MAKE_TEMPLATE[] = {
 "\nCP_STATIC_MODULES += ", /* PROJECT */
 "\n"
 "\n"
-"\n# make commands"
+"\n# make rules"
 "\n# =============================================================================="
-"\n# rules"
+"\n# default"
 "\nall: $(ALL_TARGETS)"
 "\n"
 "\n# unity test runners"
@@ -1124,9 +1148,9 @@ static const char *const INNER_MAKE_TEMPLATE[] = {
 
 
 /* src/test/project_test.c */
-#define TEST_FILL_COUNT 2ul
+#define TEST_FILL_COUNT 3ul
 static const enum ProjectNameCase TEST_FILL_MAP[] = {
-	project, project
+	project, project, project
 };
 static const char *const TEST_TEMPLATE[] = {
 "#include <unity/unity.h>"
@@ -1142,7 +1166,7 @@ static const char *const TEST_TEMPLATE[] = {
 "\n"
 "\nvoid test_", /* project */ "(void)"
 "\n{"
-"\n\tTEST_IGNORE();"
+"\n\tTEST_ASSERT_EQUAL_INT(42, ", /* project */ "());"
 "\n}"
 };
 
@@ -1166,14 +1190,38 @@ static const char *const TEST_TEMPLATE[] = {
 char *make_root_dir(char *restrict dir,
 		    const char *restrict name);
 
-static inline void build_contents(char *restrict contents,
-				  const char *const *restrict name_map,
-				  const char *const *restrict segs,
-				  const enum ProjectNameCase *restrict fill_map,
-				  const size_t fill_count);
+inline void build_contents(char *restrict contents,
+			   const char *const *restrict name_map,
+			   const char *const *restrict segs,
+			   const enum ProjectNameCase *restrict fill_map,
+			   const size_t fill_count)
+{
+	size_t i = 0ul;
 
-static inline void write_contents_to_file(const char *restrict filename,
-					  const char *restrict string);
+	do {
+		contents = extend_string(contents, segs[i]);
+		contents = extend_string(contents, name_map[ fill_map[i] ]);
+
+		++i;
+
+	} while (i < fill_count);
+
+	contents = extend_string(contents, segs[fill_count]);
+
+	*contents = '\0';
+}
+
+
+inline void write_contents_to_file(const char *restrict filename,
+				   const char *restrict string)
+{
+	FILE *file;
+	HANDLE_FOPEN(file, filename, "w");
+
+	fputs(string, file);
+
+	fclose(file);
+}
 
 /* ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
  * TOP-LEVEL FUNCTIONS
@@ -1181,12 +1229,6 @@ static inline void write_contents_to_file(const char *restrict filename,
  *
  * HELPER FUNCTIONS
  * ▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼ */
-
-static inline char *capitalize_string(const char *restrict string);
-
-static inline char *extend_string(char *restrict buffer,
-				  const char *restrict extend);
-
 /* ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
  * HELPER FUNCTIONS */
 
