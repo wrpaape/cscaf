@@ -29,6 +29,7 @@ will build the following project structure after a `make`:
     │   ├── Makefile
     │   ├── project.c
     │   └── project.h
+    │   ├── project_main.c
     ├── static
     │   └── libproject_static.a
     └── test
