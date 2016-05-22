@@ -1,4 +1,5 @@
 include $(MAKEFILE_SCAFFOLD)
+
 LD_FLAGS += -lstring_utils_static
 
 define RULES
