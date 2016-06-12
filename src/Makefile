@@ -1,6 +1,6 @@
 include $(MAKEFILE_SCAFFOLD)
 
-LD_FLAGS += -lstring_utils_static
+LD_FLAGS += -lstring_utils_static -lfile_utils_static
 
 define RULES
 $(call USER_BINARY,cscaf)

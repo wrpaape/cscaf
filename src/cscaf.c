@@ -12,20 +12,20 @@ extern inline void write_contents_to_file(const char *restrict filename,
 char *make_root_dir(char *restrict path,
 		    const char *restrict name)
 {
-	char *cwd;
-	char *base;
+	char cwd[MAXPATHLEN];
+	char *restrict base;
 
-	HANDLE_GETCWD(cwd);
+	HANDLE_GETCWD(&cwd[0], sizeof(cwd));
 
-	base = extend_string(path, cwd);
+	base = put_string(path, &cwd[0]);
 
-	PUT_SLASH(base);
+	PUT_FILE_DELIM(base);
 
 	base = stpcpy(base, name);
 
 	HANDLE_MKDIR_DEFAULT(path);
 
-	PUT_SLASH(base);
+	PUT_FILE_DELIM(base);
 
 	return base;
 }

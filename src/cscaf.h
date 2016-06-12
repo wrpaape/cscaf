@@ -11,8 +11,8 @@ extern "C" {
 /* EXTERNAL DEPENDENCIES
  * ▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼ */
 
-#include <utils/handle_file.h>		/* EXIT_ON_FAILURE, misc error handlers */
-#include <string_utils/string_utils.h>	/* capitalize_string, extend_string */
+#include <system_utils/file_utils.h>	/* EXIT_ON_FAILURE, file handlers */
+#include <string_utils/string_utils.h>	/* capitalize_string, put_string */
 
 /* ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
  * EXTERNAL DEPENDENCIES
@@ -776,11 +776,19 @@ static const enum ProjectNameCase HEADER_FILL_MAP[] = {
 static const char *const HEADER_TEMPLATE[] = {
 "#ifndef ", /* PROJECT */ "_", /* PROJECT */ "_H_"
 "\n#define ", /* PROJECT */ "_", /* PROJECT */ "_H_"
-"\n\n#ifdef __cplusplus /* ensure C linkage */"
+"\n"
+"\n#ifdef __cplusplus /* ensure C linkage */"
 "\nextern \"C\" {"
-"\n#ifndef restrict /* replace 'restrict' with c++ compatible '__restrict__' */"
-"\n#define restrict __restrict__"
-"\n#endif"
+"\n#	ifndef restrict /* use c++ compatible '__restrict__' */"
+"\n#		define restrict __restrict__"
+"\n#	endif"
+"\n#	ifndef NULL_POINTER /* use c++ null pointer macro */"
+"\n#		define NULL_POINTER nullptr"
+"\n#	endif"
+"\n#else"
+"\n#	ifndef NULL_POINTER /* use traditional c null pointer macro */"
+"\n#		define NULL_POINTER NULL"
+"\n#	endif"
 "\n#endif"
 "\n"
 "\n"
@@ -905,29 +913,29 @@ inline void build_contents(char *restrict contents,
 	size_t i = 0ul;
 
 	do {
-		contents = extend_string(contents, segs[i]);
-		contents = extend_string(contents, name_map[ fill_map[i] ]);
+		contents = put_string(contents, segs[i]);
+		contents = put_string(contents, name_map[ fill_map[i] ]);
 
 		++i;
 
 	} while (i < fill_count);
 
-	contents = extend_string(contents, segs[fill_count]);
+	contents = put_string(contents, segs[fill_count]);
 
 	*contents = '\0';
 }
 
 
-inline void write_contents_to_file(const char *restrict filename,
-				   const char *restrict string)
-{
-	FILE *file;
-	HANDLE_FOPEN(file, filename, "w");
+/* inline void write_contents_to_file(const char *restrict filename, */
+/* 				   const char *restrict string) */
+/* { */
+/* 	FILE *file; */
+/* 	HANDLE_FOPEN(file, filename, "w"); */
 
-	fputs(string, file);
+/* 	fputs(string, file); */
 
-	fclose(file);
-}
+/* 	fclose(file); */
+/* } */
 
 /* ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
  * TOP-LEVEL FUNCTIONS

@@ -24,11 +24,11 @@ int main(int argc, char *argv[])
 
 	/* ./project/LICENSE */
 	strcpy(root, "LICENSE");
-	write_contents_to_file(path, LICENSE);
+	filename_write_all(path, LICENSE);
 
 	/* ./project/Makefile */
 	strcpy(root, "Makefile");
-	write_contents_to_file(path, OUTER_MAKE);
+	filename_write_all(path, OUTER_MAKE);
 
 	/* ./project/README.md */
 	strcpy(root, "README.md");
@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
 		       README_TEMPLATE,
 		       README_FILL_MAP,
 		       README_FILL_COUNT);
-	write_contents_to_file(path, contents);
+	filename_write_all(path, contents);
 
 	/* ./project/bin */
 	strcpy(root, "bin");
@@ -58,27 +58,27 @@ int main(int argc, char *argv[])
 	/* ./project/src */
 	base = stpcpy(root, "src");
 	HANDLE_MKDIR_DEFAULT(path);
-	PUT_SLASH(base);
+	PUT_FILE_DELIM(base);
 
 	/* ./project/src/project.c */
-	basename = extend_string(base, raw_name);
+	basename = put_string(base, raw_name);
 	strcpy(basename, ".c");
 	build_contents(contents,
 		       name_map,
 		       SOURCE_TEMPLATE,
 		       SOURCE_FILL_MAP,
 		       SOURCE_FILL_COUNT);
-	write_contents_to_file(path, contents);
+	filename_write_all(path, contents);
 
 	/* ./project/src/project_main.c */
-	basename = extend_string(base, raw_name);
+	basename = put_string(base, raw_name);
 	strcpy(basename, "_main.c");
 	build_contents(contents,
 		       name_map,
 		       MAIN_TEMPLATE,
 		       MAIN_FILL_MAP,
 		       MAIN_FILL_COUNT);
-	write_contents_to_file(path, contents);
+	filename_write_all(path, contents);
 
 	/* ./project/src/project.h */
 	strcpy(basename, ".h");
@@ -87,7 +87,7 @@ int main(int argc, char *argv[])
 		       HEADER_TEMPLATE,
 		       HEADER_FILL_MAP,
 		       HEADER_FILL_COUNT);
-	write_contents_to_file(path, contents);
+	filename_write_all(path, contents);
 
 	/* ./project/src/Makefile */
 	strcpy(base, "Makefile");
@@ -96,22 +96,22 @@ int main(int argc, char *argv[])
 		       INNER_MAKE_TEMPLATE,
 		       INNER_MAKE_FILL_MAP,
 		       INNER_MAKE_FILL_COUNT);
-	write_contents_to_file(path, contents);
+	filename_write_all(path, contents);
 
 	/* ./project/test */
 	base = stpcpy(root, "test");
 	HANDLE_MKDIR_DEFAULT(path);
-	PUT_SLASH(base);
+	PUT_FILE_DELIM(base);
 
 	/* ./project/test/project_test.c */
-	basename = extend_string(base, raw_name);
+	basename = put_string(base, raw_name);
 	strcpy(basename, "_test.c");
 	build_contents(contents,
 		       name_map,
 		       TEST_TEMPLATE,
 		       TEST_FILL_MAP,
 		       TEST_FILL_COUNT);
-	write_contents_to_file(path, contents);
+	filename_write_all(path, contents);
 
 
 	/* ./project/test/test_runners */
