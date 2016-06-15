@@ -12,7 +12,7 @@ int main(int argc, char *argv[])
 	char *basename;
 
 	const char *const raw_name = argv[1];
-	const char *const cap_name = capitalize_string(raw_name);
+	const char *const cap_name = capitalized_string(raw_name);
 
 	const char *const name_map[] = {
 		[project] = raw_name,

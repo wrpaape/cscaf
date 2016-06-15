@@ -13,5 +13,5 @@ void test_capitalize_string(void)
 {
 	char *const string = "booga";
 
-	TEST_ASSERT_EQUAL_STRING("BOOGA", capitalize_string(string));
+	TEST_ASSERT_EQUAL_STRING("BOOGA", capitalized_string(string));
 }
